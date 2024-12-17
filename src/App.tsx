@@ -1,10 +1,9 @@
-import React from "react";
-import SplitScreen from "./components/SplitScreen";
+import LoginPage from "./components/LoginPage";
 
 export default function App() {
   return (
-    <div className="w-screen h-screen">
-      <SplitScreen />
+    <div className="w-screen h-screen ">
+      <LoginPage />
     </div>
   );
 }
