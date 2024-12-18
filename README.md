@@ -1,1 +1,2 @@
-# menuapp-backpanel-react
+# Admin Dashboard ---> Manager,Admin 
+#Vite+TS+React
