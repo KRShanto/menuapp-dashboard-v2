@@ -1,9 +1,9 @@
-import LoginPage from "./components/LoginPage";
+import AuthPage from "./components/AuthPage";
 
 export default function App() {
   return (
-    <div className="w-screen h-screen ">
-      <LoginPage />
+    <div className="min-h-screen min-w-screen ">
+      <AuthPage />
     </div>
   );
 }

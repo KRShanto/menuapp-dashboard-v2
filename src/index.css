@@ -2,6 +2,14 @@
 @tailwind components;
 @tailwind utilities;
 
-body {
-  background-color: #343436;
+@layer base {
+  body {
+    background-color: #343436;
+    font-family: "Cairo-regular", sans-serif;
+  }
+
+  @font-face {
+    font-family: "Cairo-regular";
+    src: url("./assets/fonts/cairo-regular.woff2") format("woff2");
+  }
 }

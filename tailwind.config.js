@@ -5,15 +5,10 @@ export default {
     extend: {
       colors: {
         bgprimary: "#343436",
+        "primary-color": "#F2E7D4",
       },
-      container: {
-        center: true,
-        padding: {
-          DEFAULT: "10px",
-          sm: "1.5rem",
-          lg: "2rem",
-          xl: "4rem",
-        },
+      fontFamily: {
+        fontprimary: ["Cairo-regular", "sans-serif"],
       },
     },
   },
