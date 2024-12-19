@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import AuthForm from "./AuthForm";
-import AlBaharat from "../assets/icons/albaharat.svg?react"; // Assuming this is a valid import
+import AlBaharat from "../../assets/icons/albaharat.svg?react";
 
 const AuthPage: React.FC = () => {
   const [formType, setFormType] = useState<
