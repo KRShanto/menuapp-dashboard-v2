@@ -1,5 +1,5 @@
-import { EmptyComp } from "./EmptyComp";
-import { Header } from "./Header";
+import { EmptyComp } from "../components/EmptyComp";
+import { Header } from "../components/Header";
 
 
 export default function MainContent() {
