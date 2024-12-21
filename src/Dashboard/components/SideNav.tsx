@@ -39,15 +39,10 @@ export function SideNav() {
       text: "Settings",
       path: "/dashboard/settings",
     },
-    {
-      icon: <LogOut size={20} />,
-      text: "Log Out",
-      path: "/dashboard/logout",
-    },
   ];
 
   return (
-    <div className="w-64 h-screen bg-gray-900 text-gray-300 flex flex-col">
+    <div className="w-64 h-screen bg-navbgprimary text-gray-300 flex flex-col border-r border-[#1F1F20] ">
       <div className="flex items-center justify-center py-4">
         <AlBaharat className="w-10 h-10" />
       </div>
@@ -60,7 +55,7 @@ export function SideNav() {
               className={({ isActive }) =>
                 isActive
                   ? "flex rounded-lg gap-2 bg-primary-color text-black px-2 py-4 "
-                  : " px-2 py-4  text-primary-color"
+                  : "px-2 py-4  text-primary-color"
               }
               end={item.path === "/dashboard"}
             >
@@ -72,6 +67,19 @@ export function SideNav() {
           </div>
         ))}
       </nav>
+      <div className="p-4">
+        <NavLink
+          to="/dashboard/logout"
+          className="flex rounded-lg gap-2 px-2 py-4 text-primary-color bg-[#1F1F20]"
+        >
+          <div className="flex items-center gap-2 ">
+            <span className="mt-0.5">
+              <LogOut size={20} />
+            </span>
+            <span>Log Out</span>
+          </div>
+        </NavLink>
+      </div>
     </div>
   );
 }

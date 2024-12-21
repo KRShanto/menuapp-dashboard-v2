@@ -2,13 +2,13 @@ import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import AuthPage from "./Auth/components/AuthPage";
 
 import DashBoard from "./Dashboard/components/DashBoard";
-import MainContent from "./Dashboard/pages/MainContent";
 import MenuApproval from "./Dashboard/pages/MenuApproval";
 import ManagerManagement from "./Dashboard/pages/ManagerManagement";
 import Feedback from "./Dashboard/pages/Feedback";
 import Settings from "./Dashboard/pages/Settings";
 import Logout from "./Dashboard/pages/Logout";
 import Discount from "./Dashboard/pages/Discount";
+import MenuList from "./Dashboard/pages/MenuList";
 export default function App() {
   return (
     <Router>
@@ -16,7 +16,7 @@ export default function App() {
         <Route path="/" element={<AuthPage />} />
         <Route path="/dashboard" element={<DashBoard />}>
           {/* the default route */}
-          <Route index element={<MainContent />}></Route>
+          <Route index element={<MenuList />}></Route>
           {/* other routes */}
           <Route path="discount" element={<Discount />} />
           <Route path="menu-approval" element={<MenuApproval />} />
