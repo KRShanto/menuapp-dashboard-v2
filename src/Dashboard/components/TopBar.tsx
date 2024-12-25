@@ -29,7 +29,7 @@ export default function TopBar() {
     }
   };
   return (
-    <div className="flex justify-between items-center h-full px-4">
+    <div className="flex justify-between items-center h-full px-4 border-b border-[#1F1F20]">
       {/* show current date */}
       <div>{`${day}${daySuffix(
         day
