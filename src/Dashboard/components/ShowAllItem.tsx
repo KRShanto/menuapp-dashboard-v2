@@ -1,7 +1,7 @@
 import React from "react";
 import { ItemsType } from "../../types/Item";
 import FoodItemCard from "./FoodItemCard";
-import { AlertDialogConfirm } from "./AlertDialogConfirm";
+import SelectComponent from "./SelectComponent";
 
 export default function ShowAllItem() {
   const initialList: ItemsType[] = [
@@ -86,22 +86,15 @@ export default function ShowAllItem() {
   const cancelSelection = () => {
     setSelectedItems([]);
   };
-
+  const consfirmationTitle = "Are You Sure to Delete Selected Items?";
   return (
     <div className="space-y-4">
-      <div className="flex items-center justify-between bg-navbgprimary p-2 text-primary-color rounded-lg">
-        <button onClick={selectAll}>Select All ({selectedItems})</button>
-        <div className="space-x-2">
-          <button
-            onClick={cancelSelection}
-            disabled={selectedItems.length === 0}
-            className="felx  border border-[#DC3545] rounded-lg px-4 py-2 "
-          >
-            <span className="relative -top-0.5">Cancel</span>
-          </button>
-          <AlertDialogConfirm />
-        </div>
-      </div>
+      <SelectComponent
+        selectAll={selectAll}
+        selectedItems={selectedItems}
+        cancelSelection={cancelSelection}
+        titleText={consfirmationTitle}
+      />
       <div className="grid grid-cols-4 grid-rows-2 gap-3 md:grid-cols-3 md:grid-rows-3 lg:grid-cols-4 lg:grid-rows-2 ">
         {list.map((item) => {
           return (

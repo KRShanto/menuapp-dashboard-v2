@@ -10,7 +10,7 @@ import {
 } from "@/components/ui/alert-dialog";
 import { Button } from "@/components/ui/button";
 
-export function AlertDialogConfirm() {
+export function AlertDialogConfirm({title}:{title?:string}) {
   return (
     <AlertDialog>
       <AlertDialogTrigger asChild>
@@ -18,8 +18,8 @@ export function AlertDialogConfirm() {
       </AlertDialogTrigger>
       <AlertDialogContent className="bg-navbgprimary rounded-lg ">
         <AlertDialogHeader>
-          <AlertDialogTitle className="text-primary-color text-center blur-none">
-            Are You Sure to Delete Selected Items?
+          <AlertDialogTitle className="text-white text-center blur-none font-normal">
+            {title}
           </AlertDialogTitle>
         </AlertDialogHeader>
         <AlertDialogFooter className="flex flex-col gap-2">
