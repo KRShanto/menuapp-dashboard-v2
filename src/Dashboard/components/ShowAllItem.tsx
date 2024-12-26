@@ -1,7 +1,7 @@
 import React from "react";
 import { ItemsType } from "../../types/Item";
 import FoodItemCard from "./FoodItemCard";
-import ConfirmDelete from "./ConfirmDelete";
+import { AlertDialogConfirm } from "./AlertDialogConfirm";
 
 export default function ShowAllItem() {
   const initialList: ItemsType[] = [
@@ -72,8 +72,9 @@ export default function ShowAllItem() {
     },
   ];
   const [selectedItems, setSelectedItems] = React.useState<number[]>([]);
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [list, setList] = React.useState<ItemsType[]>(initialList);
-  const [isPopconfirmVisible, setIsPopconfirmVisible] = React.useState(false);
+
   const handleSelect = (id: number) => {
     setSelectedItems((prev) =>
       prev.includes(id) ? prev.filter((i) => i !== id) : [...prev, id]
@@ -85,26 +86,9 @@ export default function ShowAllItem() {
   const cancelSelection = () => {
     setSelectedItems([]);
   };
-  const deleteSelected = () => {
-    setList((prevList) =>
-      prevList.filter((item) => !selectedItems.includes(item.id))
-    );
-    cancelSelection();
-  };
-  const handleConfirm = () => {
-    deleteSelected();
-    setIsPopconfirmVisible(false);
-  };
 
-  const handleCancel = () => {
-    setIsPopconfirmVisible(false);
-  };
   return (
     <div className="space-y-4">
-      {isPopconfirmVisible && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 z-40"></div>
-      )}
-
       <div className="flex items-center justify-between bg-navbgprimary p-2 text-primary-color rounded-lg">
         <button onClick={selectAll}>Select All ({selectedItems})</button>
         <div className="space-x-2">
@@ -115,11 +99,7 @@ export default function ShowAllItem() {
           >
             <span className="relative -top-0.5">Cancel</span>
           </button>
-          <ConfirmDelete
-            onConfirm={handleConfirm}
-            onCancel={handleCancel}
-            disabled={selectedItems.length === 0}
-          />
+          <AlertDialogConfirm />
         </div>
       </div>
       <div className="grid grid-cols-4 grid-rows-2 gap-3 md:grid-cols-3 md:grid-rows-3 lg:grid-cols-4 lg:grid-rows-2 ">
