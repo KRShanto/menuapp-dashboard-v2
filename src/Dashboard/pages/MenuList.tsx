@@ -1,6 +1,7 @@
 import { useState } from "react";
 import FloatAddEdit from "../components/FloatAddEdit";
 import ShowAllItem from "../components/ShowAllItem";
+import AppSidebar from "@/components/sidebar/AppSidebar";
 
 export default function MenuList() {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -8,6 +9,7 @@ export default function MenuList() {
   return (
     <div className="h-full">
       <h1 className="text-primary-color text-3xl">All Menu Items</h1>
+
       {/* center text of the page */}
       {testShow ? (
         <>

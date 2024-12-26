@@ -9,6 +9,7 @@ import Settings from "./Dashboard/pages/Settings";
 import Logout from "./Dashboard/pages/Logout";
 import Discount from "./Dashboard/pages/Discount";
 import MenuList from "./Dashboard/pages/MenuList";
+import { SidebarProvider } from "./components/ui/sidebar";
 export default function App() {
   return (
     <Router>

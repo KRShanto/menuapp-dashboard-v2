@@ -2,6 +2,9 @@ import React from "react";
 import { ItemsType } from "../../types/Item";
 import FoodItemCard from "./FoodItemCard";
 import SelectComponent from "./SelectComponent";
+import OptionOpener from "@/components/sidebar/OptionOpener";
+import OptionButton from "@/components/sidebar/OptionButton";
+import AppSidebar from "@/components/sidebar/AppSidebar";
 
 export default function ShowAllItem() {
   const initialList: ItemsType[] = [
@@ -89,6 +92,11 @@ export default function ShowAllItem() {
   const consfirmationTitle = "Are You Sure to Delete Selected Items?";
   return (
     <div className="space-y-4">
+      <OptionOpener>
+        <OptionButton sidebar="MENU_ADD">Fuck you</OptionButton>
+        <OptionButton>Delete client</OptionButton>
+      </OptionOpener>
+
       <SelectComponent
         selectAll={selectAll}
         selectedItems={selectedItems}

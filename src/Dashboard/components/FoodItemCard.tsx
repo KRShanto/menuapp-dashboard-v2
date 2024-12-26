@@ -24,7 +24,7 @@ const FoodItemCard = ({
       <Checkbox
         onChange={onSelect}
         checked={isSelected}
-        className="absolute z-50 top-4 left-4"
+        className="absolute z-30 top-4 left-4"
       />
       <div className="group w-full h-72 max-w-md rounded-lg bg-navbgprimary  p-1.5 space-y-2">
         <div className="relative aspect-square w-full overflow-hidden rounded-lg">
