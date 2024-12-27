@@ -1,20 +1,9 @@
-import React, { useEffect, useState } from "react"; // Added useEffect and useState
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useEffect, useState } from "react"; // Added useEffect and useState
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 
 import SidebarFooter from "./SidebarFooter";
-import { Button } from "@/components/ui/button";
-import {
-  Form,
-  FormControl,
-  FormDescription,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from "@/components/ui/form";
-import { Input } from "@/components/ui/input";
 
 // Define the Zod schema
 const schema = z.object({
@@ -71,7 +60,7 @@ export default function MenuAdd() {
   }
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)} className="h-full p-3">
+    <form onSubmit={handleSubmit(onSubmit)} className="h-[97%] p-3">
       <div className="h-[95%]">
         <div className="relative">
           {/* if image dropped, then show the image else show a black box */}
@@ -110,7 +99,7 @@ export default function MenuAdd() {
           </div>
         </div>
 
-        <div className="relative mt-10">
+        <div className="relative mt-4">
           <label
             className="absolute -top-3 left-2 z-20 text-nowrap bg-[#2B2A2C] px-2 text-sm text-foreground/70"
             htmlFor="name"
@@ -202,7 +191,7 @@ export default function MenuAdd() {
       </div>
 
       <SidebarFooter
-        submitHandler={handleSubmit(onSubmit)}
+        submitHandler={() => handleSubmit(onSubmit)()}
         successBtnText="Add"
         disabled={!isValid} // Use formState.isValid
       />

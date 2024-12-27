@@ -27,7 +27,8 @@ export default function SidebarFooterComponent({
         </button>
         <button
           className="w-full rounded-md bg-foreground/50 p-2 text-black"
-          formAction={handle}
+          type="button"
+          onClick={() => handle(new FormData())}
         >
           {successBtnText}
         </button>

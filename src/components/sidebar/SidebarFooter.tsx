@@ -32,7 +32,7 @@ export default function SidebarFooterComponent({
           "w-full rounded-md bg-foreground p-2 text-black",
           disabled && "cursor-not-allowed opacity-50",
         )}
-        formAction={handle}
+        onClick={() => handle(new FormData())}
       >
         {successBtnText}
       </button>

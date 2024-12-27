@@ -7,7 +7,7 @@ export default function AppSidebar() {
   console.log("Opened sidebar: ", sidebarType);
 
   return (
-    <Sidebar side="right" className="mt-[4.6rem] h-[92%] z-50">
+    <Sidebar side="right" className="mt-[58px] sm:h-[90%] md:h-[94%] z-50">
       {sidebarType === "MENU_ADD" && <MenuAdd />}
     </Sidebar>
   );
