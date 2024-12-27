@@ -42,7 +42,7 @@ export function SideNav() {
   ];
 
   return (
-    <div className="w-64 h-screen bg-navbgprimary text-gray-300 flex flex-col border-r border-[#1F1F20] ">
+    <div className="fixed h-screen w-[20%] bg-navbgprimary text-gray-300 flex flex-col border-r border-[#1F1F20] ">
       <div className="flex items-center justify-center py-4">
         <AlBaharat className="w-10 h-10" />
       </div>
