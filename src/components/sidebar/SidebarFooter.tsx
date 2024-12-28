@@ -1,22 +1,18 @@
-import React from "react";
+import { useFormStatus } from "react-dom";
 import { useSidebar } from "../ui/sidebar";
 import { cn } from "@/lib/utils";
 
 export default function SidebarFooterComponent({
   successBtnText,
-  submitHandler,
   disabled,
 }: {
   successBtnText: string;
-  submitHandler: (formData: FormData) => void;
   disabled?: boolean;
 }) {
   const { setOpen } = useSidebar();
+  const { pending } = useFormStatus();
 
-  async function handle(formData: FormData) {
-    submitHandler(formData);
-    setOpen(false, undefined);
-  }
+  console.log("pending", pending);
 
   return (
     <div className="flex w-full justify-center gap-3">
@@ -30,11 +26,10 @@ export default function SidebarFooterComponent({
       <button
         className={cn(
           "w-full rounded-md bg-foreground p-2 text-black",
-          disabled && "cursor-not-allowed opacity-50",
+          disabled && "cursor-not-allowed opacity-50"
         )}
-        onClick={() => handle(new FormData())}
       >
-        {successBtnText}
+        {pending ? "Loading..." : successBtnText}
       </button>
     </div>
   );

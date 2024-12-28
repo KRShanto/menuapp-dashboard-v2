@@ -2,8 +2,10 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useEffect, useState } from "react"; // Added useEffect and useState
 import { useForm } from "react-hook-form";
 import { z } from "zod";
-
-import SidebarFooter from "./SidebarFooter";
+import SidebarFooter from "../sidebar/SidebarFooter";
+import { db, app, storage } from "@/lib/firebase";
+import { addDoc, collection } from "firebase/firestore";
+import { useSidebar } from "../ui/sidebar";
 
 // Define the Zod schema
 const schema = z.object({
@@ -15,16 +17,15 @@ const schema = z.object({
   image: z.instanceof(File).nullable(), // Allow null
 });
 
-type FormData = z.infer<typeof schema>;
+type FormInputData = z.infer<typeof schema>;
 
 export default function MenuAdd() {
   const {
     register,
-    handleSubmit,
     setValue,
     watch,
     formState: { errors, isValid },
-  } = useForm<FormData>({
+  } = useForm<FormInputData>({
     resolver: zodResolver(schema),
     mode: "onChange", // Enable real-time validation
     defaultValues: {
@@ -39,6 +40,8 @@ export default function MenuAdd() {
 
   const image = watch("image");
   const [imageURL, setImageURL] = useState<string | null>(null);
+
+  const { setOpen } = useSidebar();
 
   useEffect(() => {
     if (image instanceof File) {
@@ -57,10 +60,47 @@ export default function MenuAdd() {
 
   async function onSubmit(data: FormData) {
     console.log("Form Submitted", data);
+
+    const name = data.get("name");
+    const category = data.get("category");
+    const price = data.get("price");
+    const description = data.get("description");
+    const calories = data.get("calories");
+
+    let imageURL = null;
+
+    try {
+      // TODO Upload image to Firebase Storage
+      /*
+      if (data.image) {
+        const storageRef = ref(storage, `images/${data.image.name}`);
+        await uploadBytes(storageRef, data.image);
+        const imageURL = await getDownloadURL(storageRef);
+        data.imageURL = imageURL;
+      }
+        */
+
+      // Add data to Firestore
+      await addDoc(collection(db, "menu"), {
+        name: name,
+        category: category,
+        price: price,
+        description: description,
+        calories: calories,
+        imageURL: imageURL || null,
+      });
+
+      console.log("Data uploaded successfully");
+
+      // Close the sidebar
+      setOpen(false, undefined);
+    } catch (error) {
+      console.error("Error uploading data: ", error);
+    }
   }
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)} className="h-[97%] p-3">
+    <form action={onSubmit} className="h-[97%] p-3">
       <div className="h-[95%]">
         <div className="relative">
           {/* if image dropped, then show the image else show a black box */}
@@ -191,7 +231,6 @@ export default function MenuAdd() {
       </div>
 
       <SidebarFooter
-        submitHandler={() => handleSubmit(onSubmit)()}
         successBtnText="Add"
         disabled={!isValid} // Use formState.isValid
       />

@@ -1,5 +1,5 @@
 import { Sidebar, useSidebar } from "@/components/ui/sidebar";
-import MenuAdd from "./MenuAdd";
+import MenuAdd from "../sidebar-components/MenuAdd";
 
 export default function AppSidebar() {
   const { sidebarType } = useSidebar();
