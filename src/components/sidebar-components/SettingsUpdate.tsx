@@ -1,6 +1,4 @@
-import { db, MENU_COLLECTION } from "@/lib/firebase";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { addDoc, collection } from "firebase/firestore";
 import { useEffect, useState } from "react"; // Added useEffect and useState
 import { useForm } from "react-hook-form";
 import { z } from "zod";
@@ -10,16 +8,17 @@ import { useSidebar } from "../ui/sidebar";
 // Define the Zod schema
 const schema = z.object({
   name: z.string().min(1, "Name is required"),
-  category: z.string().min(1, "Category is required"),
-  price: z.number().min(0, "Price must be positive").nullable(), // Allow null
-  description: z.string().min(1, "Description is required"),
-  calories: z.number().min(0, "Calories must be positive").nullable(), // Allow null
-  image: z.instanceof(File).nullable(), // Allow null
+  email_address: z.string().email("Invalid email address"),
+  phone: z.string().min(1, "Phone number is required"),
+  username: z.string().min(1, "Username is required"),
+  old_password: z.string().min(1, "Old password is required"),
+  new_password: z.string().min(1, "New password is required"),
+  confirm_password: z.string().min(1, "Confirm password is required"),
+  image: z.instanceof(File).nullable().optional(),
 });
-
 type FormInputData = z.infer<typeof schema>;
 
-export default function MenuAdd() {
+export default function SettingsUpdate() {
   const {
     register,
     setValue,
@@ -30,11 +29,13 @@ export default function MenuAdd() {
     mode: "onChange", // Enable real-time validation
     defaultValues: {
       name: "",
-      category: "",
-      price: null, // Set to null
-      description: "",
-      calories: null, // Set to null
-      image: undefined, // Change from null to undefined
+      email_address: "",
+      phone: "",
+      username: "",
+      old_password: "",
+      new_password: "",
+      confirm_password: "",
+      image: null,
     },
   });
 
@@ -61,14 +62,17 @@ export default function MenuAdd() {
   async function onSubmit(data: FormData) {
     console.log("Form Submitted", data);
 
-    const name = data.get("name");
-    const category = data.get("category");
-    const price = data.get("price");
-    const description = data.get("description");
-    const calories = data.get("calories");
+    // const name = data.get("name");
+    // const email = data.get("email_address");
+    // const username = data.get("username");
+    // const phone = data.get("phone");
+    // const old_password = data.get("old_password");
+    // const new_password = data.get("new_password");
+    // const confirm_password = data.get("confirm_password");
+
 
     // eslint-disable-next-line prefer-const
-    let imageURL = null;
+    // let imageURL = null;
 
     try {
       // TODO Upload image to Firebase Storage
@@ -82,15 +86,17 @@ export default function MenuAdd() {
         */
 
       // Add data to Firestore
-      await addDoc(collection(db, MENU_COLLECTION), {
-        name: name,
-        category: category,
-        price: price,
-        description: description,
-        calories: calories,
-        imageURL: imageURL || null,
-        createdAt: new Date(),
-      });
+      // await addDoc(collection(db, MENU_COLLECTION), {
+      //   name: data.name,
+      //   email: data.email_address,
+      //   phone: data.phone,
+      //   username: data.username,
+      //   old_password: data.old_password,
+      //   new_password: data.new_password,
+      //   confirm_password: data.confirm_password,
+      //   createdAt: new Date(),
+      //   imageURL: null,
+      // });
 
       console.log("Data uploaded successfully");
 
@@ -147,12 +153,12 @@ export default function MenuAdd() {
             className="absolute -top-3 left-2 z-20 text-nowrap bg-[#2B2A2C] px-2 text-sm text-foreground/70"
             htmlFor="name"
           >
-            Item Name
+            Name
           </label>
           <input
             {...register("name")}
-            placeholder="Enter Item Name"
-            className="w-full rounded-md border border-foreground/70 bg-transparent p-2 px-3 placeholder-foreground/70 outline-none"
+            value="Fahim"
+            className="h-8 w-full rounded-md border border-foreground/70 bg-transparent p-2 px-3 placeholder-foreground/70 outline-none"
           />
           {errors.name && (
             <span className="text-red-500">{errors.name.message}</span>
@@ -163,17 +169,18 @@ export default function MenuAdd() {
         <div className="relative mt-5">
           <label
             className="absolute -top-3 left-2 z-20 text-nowrap bg-[#2B2A2C] px-2 text-sm text-foreground/70"
-            htmlFor="category"
+            htmlFor="email_address"
           >
-            Category
+            Email Address
           </label>
           <input
-            {...register("category")}
-            placeholder="Enter Category Name"
-            className="w-full rounded-md border border-foreground/70 bg-transparent p-2 px-3 placeholder-foreground/70 outline-none"
+            {...register("email_address")}
+            type="email"
+            value="fahim@gmail.com"
+            className="h-8 w-full rounded-md border border-foreground/70 bg-transparent p-2 px-3 placeholder-foreground/70 outline-none"
           />
-          {errors.category && (
-            <span className="text-red-500">{errors.category.message}</span>
+          {errors.email_address && (
+            <span className="text-red-500">{errors.email_address.message}</span>
           )}{" "}
           {/* Changed error color */}
         </div>
@@ -183,15 +190,16 @@ export default function MenuAdd() {
             className="absolute -top-3 left-2 z-20 text-nowrap bg-[#2B2A2C] px-2 text-sm text-foreground/70"
             htmlFor="description"
           >
-            Description
+            Phone Number
           </label>
-          <textarea
-            {...register("description")}
-            placeholder="Enter Description"
-            className="h-24 w-full rounded-md border border-foreground/70 bg-transparent p-2 px-3 placeholder-foreground/70 outline-none"
+          <input
+            {...register("phone")}
+            type="tel"
+            value="01700000000"
+            className="h-8 w-full rounded-md border border-foreground/70 bg-transparent p-2 px-3 placeholder-foreground/70 outline-none"
           />
-          {errors.description && (
-            <span className="text-red-500">{errors.description.message}</span>
+          {errors.phone && (
+            <span className="text-red-500">{errors.phone.message}</span>
           )}{" "}
           {/* Changed error color */}
         </div>
@@ -201,15 +209,16 @@ export default function MenuAdd() {
             className="absolute -top-3 left-2 z-20 text-nowrap bg-[#2B2A2C] px-2 text-sm text-foreground/70"
             htmlFor="calories"
           >
-            Calories
+            Username
           </label>
           <input
-            {...register("calories", { valueAsNumber: true })}
-            placeholder="Enter Calories"
-            className="w-full rounded-md border border-foreground/70 bg-transparent p-2 px-3 placeholder-foreground/70 outline-none"
+            {...register("username")}
+            type="text"
+            value="fahimone"
+            className="h-8 w-full rounded-md border border-foreground/70 bg-transparent p-2 px-3 placeholder-foreground/70 outline-none"
           />
-          {errors.calories && (
-            <span className="text-red-500">{errors.calories.message}</span>
+          {errors.username && (
+            <span className="text-red-500">{errors.username.message}</span>
           )}{" "}
           {/* Changed error color */}
         </div>
@@ -217,19 +226,62 @@ export default function MenuAdd() {
         <div className="relative mt-5">
           <label
             className="absolute -top-3 left-2 z-20 text-nowrap bg-[#2B2A2C] px-2 text-sm text-foreground/70"
-            htmlFor="price"
+            htmlFor="old_password"
           >
-            Price
+            Old Password
           </label>
           <input
-            {...register("price", { valueAsNumber: true })}
-            placeholder="Enter Price"
-            className="w-full rounded-md border border-foreground/70 bg-transparent p-2 px-3 placeholder-foreground/70 outline-none"
+            {...register("old_password", {
+              required: "Old password is required",
+            })}
+            type="password"
+            className="h-8 w-full rounded-md border border-foreground/70 bg-transparent p-2 px-3 placeholder-foreground/70 outline-none"
           />
-          {errors.price && (
-            <span className="text-red-500">{errors.price.message}</span>
-          )}{" "}
-          {/* Changed error color */}
+          {errors.old_password && (
+            <span className="text-red-500">{errors.old_password.message}</span>
+          )}
+        </div>
+
+        <div className="relative mt-5">
+          <label
+            className="absolute -top-3 left-2 z-20 text-nowrap bg-[#2B2A2C] px-2 text-sm text-foreground/70"
+            htmlFor="new_password"
+          >
+            New Password
+          </label>
+          <input
+            {...register("new_password", {
+              required: "New password is required",
+            })}
+            type="password"
+            className="h-8 w-full rounded-md border border-foreground/70 bg-transparent p-2 px-3 placeholder-foreground/70 outline-none"
+          />
+          {errors.new_password && (
+            <span className="text-red-500">{errors.new_password.message}</span>
+          )}
+        </div>
+
+        <div className="relative mt-5">
+          <label
+            className="absolute -top-3 left-2 z-20 text-nowrap bg-[#2B2A2C] px-2 text-sm text-foreground/70"
+            htmlFor="confirm_password"
+          >
+            Confirm Password
+          </label>
+          <input
+            {...register("confirm_password", {
+              required: "Confirm password is required",
+              validate: (value) =>
+                value === watch("new_password") || "Passwords do not match",
+            })}
+            type="password"
+            className="h-8 w-full rounded-md border border-foreground/70 bg-transparent p-2 px-3 placeholder-foreground/70 outline-none"
+          />
+          {errors.confirm_password && (
+            <span className="text-red-500">
+              {errors.confirm_password.message}
+            </span>
+          )}
         </div>
       </div>
 

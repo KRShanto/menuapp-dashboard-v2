@@ -5,8 +5,8 @@ interface SelectionProps {
   selectedItems?: string[];
   cancelSelection?: () => void;
   titleText?: string;
-  isSelected: boolean;
-  onSelect: () => void;
+  isSelected?: boolean;
+  onSelect?: () => void;
 }
 export default function SelectComponent({
   selectAll,

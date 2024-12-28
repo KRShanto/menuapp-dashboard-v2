@@ -19,7 +19,7 @@ const schema = z.object({
 
 type FormInputData = z.infer<typeof schema>;
 
-export default function MenuAdd() {
+export default function MenuEdit() {
   const {
     register,
     setValue,

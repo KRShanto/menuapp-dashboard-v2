@@ -1,5 +1,12 @@
 import { CiEdit } from "react-icons/ci";
 import SelectComponent from "../components/SelectComponent";
+import OptionOpener from "@/components/sidebar/OptionOpener";
+import OptionButton from "@/components/sidebar/OptionButton";
+import { RiDeleteBin7Line } from "react-icons/ri";
+import { IoAddOutline } from "react-icons/io5";
+import { useState } from "react";
+import { Checkbox } from "antd";
+import { useSidebar } from "@/components/ui/sidebar";
 interface Manager {
   id: number;
   name: string;
@@ -26,10 +33,36 @@ const managers: Manager[] = [
   },
 ];
 const ManagerList = () => {
+  const { open } = useSidebar();
   const consfirmationTitle = "Are You Sure to Delete Selected Managers?";
+  const [deleteCLicked, setDeleteClicked] = useState(false);
+  const [selectedManagers, setSelectedManagers] = useState<number[]>([]);
+  const handleSelectAll = () => {
+    if (selectedManagers.length === managers.length) {
+      setSelectedManagers([]);
+    } else {
+      setSelectedManagers(managers.map((manager) => manager.id));
+    }
+  };
+
+  const handleSelect = (id: number) => {
+    setSelectedManagers((prev) =>
+      prev.includes(id)
+        ? prev.filter((managerId) => managerId !== id)
+        : [...prev, id]
+    );
+  };
   return (
     <div>
-      <SelectComponent titleText={consfirmationTitle} />
+      {deleteCLicked && (
+        <SelectComponent
+          titleText={consfirmationTitle}
+          selectAll={handleSelectAll}
+          selectedItems={selectedManagers.map(String)}
+          cancelSelection={() => setSelectedManagers([])}
+          isSelected={selectedManagers.length === managers.length}
+        />
+      )}
       <div className="w-full max-w-6xl mx-auto p-6 text-primary-color">
         <h1 className="text-3xl font-semibold mb-8">Manager Management</h1>
         <div className="rounded-lg  overflow-hidden">
@@ -52,6 +85,12 @@ const ManagerList = () => {
                 >
                   <td className="px-6 py-4">
                     <div className="flex items-center gap-3">
+                      {deleteCLicked && (
+                        <Checkbox
+                          onChange={() => handleSelect(manager.id)}
+                          checked={selectedManagers.includes(manager.id)}
+                        />
+                      )}
                       <span className="">
                         {String(manager.id).padStart(2, "0")}
                       </span>
@@ -83,6 +122,23 @@ const ManagerList = () => {
           </table>
         </div>
       </div>
+      <OptionOpener>
+        <OptionButton onClick={() => setDeleteClicked(true)}>
+          {" "}
+          <span className="inline-flex items-center justify-between w-[150px]">
+            Delete Manager
+            <RiDeleteBin7Line />
+          </span>
+        </OptionButton>
+        <OptionButton sidebar="MANAGER_ADD">
+          <span className="inline-flex items-center justify-between w-[150px]">
+            Add New Manager <IoAddOutline size={20} />
+          </span>
+        </OptionButton>
+      </OptionOpener>
+      {open && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 -z-1"></div>
+      )}
     </div>
   );
 };

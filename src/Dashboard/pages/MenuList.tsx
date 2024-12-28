@@ -9,7 +9,9 @@ export default function MenuList() {
   const [testShow, setTestShow] = useState(false);
   return (
     <div className="h-full">
-      <h1 className="text-primary-color text-3xl">All Menu Items</h1>
+      <h1 className="text-primary-color text-3xl font-semibold">
+        All Menu Items
+      </h1>
       <OptionOpener>
         <OptionButton>
           {" "}
