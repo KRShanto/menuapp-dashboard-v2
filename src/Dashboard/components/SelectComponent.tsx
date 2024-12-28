@@ -34,7 +34,10 @@ export default function SelectComponent({
         >
           <span className="relative -top-0.5">Cancel</span>
         </button>
-        <AlertDialogConfirm title={titleText} />
+        <AlertDialogConfirm
+          title={titleText}
+          selectedItems={selectedItems || []}
+        />
       </div>
     </div>
   );

@@ -9,8 +9,29 @@ import {
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 import { Button } from "@/components/ui/button";
+import { db } from "@/lib/firebase";
+import { deleteDoc, doc } from "firebase/firestore";
 
-export function AlertDialogConfirm({title}:{title?:string}) {
+export function AlertDialogConfirm({
+  title,
+  selectedItems,
+}: {
+  title?: string;
+  selectedItems: string[];
+}) {
+  async function handleDelete() {
+    try {
+      const deletePromises = selectedItems.map((id) =>
+        deleteDoc(doc(db, "menu", id))
+      );
+      await Promise.all(deletePromises);
+      // Optionally, add feedback or state updates here
+    } catch (error) {
+      console.error("Error deleting documents: ", error);
+      // Optionally, handle the error in the UI
+    }
+  }
+
   return (
     <AlertDialog>
       <AlertDialogTrigger asChild>
@@ -26,7 +47,10 @@ export function AlertDialogConfirm({title}:{title?:string}) {
           <AlertDialogCancel className="border border-primary-color bg-transparent text-primary-color hover:bg-transparent hover:text-primary-color">
             Cancel
           </AlertDialogCancel>
-          <AlertDialogAction className="bg-primary-color text-black hover:text-primary-color">
+          <AlertDialogAction
+            className="bg-primary-color text-black hover:text-primary-color"
+            onClick={handleDelete}
+          >
             Delete
           </AlertDialogAction>
         </AlertDialogFooter>
