@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { ItemsType } from "../../types/Item";
 import FoodItemCard from "./FoodItemCard";
 import SelectComponent from "./SelectComponent";
-import { db } from "@/lib/firebase";
+import { db, MENU_COLLECTION } from "@/lib/firebase";
 import { collection, onSnapshot, query, orderBy } from "firebase/firestore";
 
 export default function ShowAllItem() {
@@ -12,7 +12,7 @@ export default function ShowAllItem() {
   // fetch "menu" from firebase
   useEffect(() => {
     const fetchMenu = () => {
-      const menuCollection = collection(db, "menu");
+      const menuCollection = collection(db, MENU_COLLECTION);
       const q = query(menuCollection, orderBy("createdAt", "desc"));
       const unsub = onSnapshot(q, (snapshot) => {
         const menuList = snapshot.docs.map((doc) => ({

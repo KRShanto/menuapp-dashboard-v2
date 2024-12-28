@@ -3,7 +3,7 @@ import { useEffect, useState } from "react"; // Added useEffect and useState
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import SidebarFooter from "../sidebar/SidebarFooter";
-import { db, app, storage } from "@/lib/firebase";
+import { db, app, storage, MENU_COLLECTION } from "@/lib/firebase";
 import { addDoc, collection } from "firebase/firestore";
 import { useSidebar } from "../ui/sidebar";
 
@@ -81,7 +81,7 @@ export default function MenuAdd() {
         */
 
       // Add data to Firestore
-      await addDoc(collection(db, "menu"), {
+      await addDoc(collection(db, MENU_COLLECTION), {
         name: name,
         category: category,
         price: price,

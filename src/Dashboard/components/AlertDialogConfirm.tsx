@@ -9,7 +9,7 @@ import {
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 import { Button } from "@/components/ui/button";
-import { db } from "@/lib/firebase";
+import { db, MENU_COLLECTION } from "@/lib/firebase";
 import { deleteDoc, doc } from "firebase/firestore";
 
 export function AlertDialogConfirm({
@@ -22,7 +22,7 @@ export function AlertDialogConfirm({
   async function handleDelete() {
     try {
       const deletePromises = selectedItems.map((id) =>
-        deleteDoc(doc(db, "menu", id))
+        deleteDoc(doc(db, MENU_COLLECTION, id))
       );
       await Promise.all(deletePromises);
       // Optionally, add feedback or state updates here
