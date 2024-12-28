@@ -88,6 +88,7 @@ export default function MenuAdd() {
         description: description,
         calories: calories,
         imageURL: imageURL || null,
+        createdAt: new Date(),
       });
 
       console.log("Data uploaded successfully");

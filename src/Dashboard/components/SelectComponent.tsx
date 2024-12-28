@@ -2,7 +2,7 @@ import { Checkbox } from "antd";
 import { AlertDialogConfirm } from "./AlertDialogConfirm";
 interface SelectionProps {
   selectAll?: () => void;
-  selectedItems?: number[];
+  selectedItems?: string[];
   cancelSelection?: () => void;
   titleText?: string;
   isSelected: boolean;
@@ -18,8 +18,8 @@ export default function SelectComponent({
 }: SelectionProps) {
   return (
     <div className="flex items-center justify-between bg-navbgprimary p-2 text-primary-color rounded-lg">
-      <button onClick={selectAll}>
-        Select All ({selectedItems}){" "}
+      <button onClick={selectAll} className="flex gap-3">
+        Select All
         <Checkbox
           onChange={onSelect}
           checked={isSelected}

@@ -1,8 +1,9 @@
 export type ItemsType = {
-  id: number;
+  id: string;
   name: string;
   image: string;
   description: string;
   price: number;
   calories: number;
+  createdAt: number;
 };
