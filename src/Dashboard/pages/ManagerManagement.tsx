@@ -33,7 +33,7 @@ const managers: Manager[] = [
   },
 ];
 const ManagerList = () => {
-  const { open } = useSidebar();
+  const { setOpen, open } = useSidebar();
   const consfirmationTitle = "Are You Sure to Delete Selected Managers?";
   const [deleteCLicked, setDeleteClicked] = useState(false);
   const [selectedManagers, setSelectedManagers] = useState<number[]>([]);
@@ -114,7 +114,9 @@ const ManagerList = () => {
                   </td>
                   <td className="px-6 py-4">
                     {/* icon of edit */}
-                    <CiEdit />
+                    <button onClick={() => setOpen(true, "MANAGER_EDIT")}>
+                      <CiEdit />
+                    </button>
                   </td>
                 </tr>
               ))}
