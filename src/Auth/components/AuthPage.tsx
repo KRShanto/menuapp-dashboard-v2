@@ -1,16 +1,26 @@
 import React, { useState } from "react";
 import AuthForm from "./AuthForm";
 import AlBaharat from "../../assets/icons/albaharat.svg?react";
+import { auth } from "@/lib/firebase";
+import { signInWithEmailAndPassword } from "firebase/auth";
 
 const AuthPage: React.FC = () => {
   const [formType, setFormType] = useState<
     "login" | "forgot" | "changePassword"
   >("login");
+  const [error, setError] = useState("");
 
-  const handleSubmit = (data: { email?: string; password?: string }) => {
+  const handleSubmit = async (data: { email?: string; password?: string }) => {
     if (formType === "login") {
       // Handle login
-      console.log("Login data:", data);
+      try {
+        await signInWithEmailAndPassword(auth, data.email!, data.password!);
+
+        // Signed in
+        window.location.href = "/dashboard";
+      } catch (error) {
+        setError("Invalid email or password");
+      }
     } else if (formType === "forgot") {
       // Handle password reset
       console.log("Forgot Password data:", data);
@@ -58,6 +68,9 @@ const AuthPage: React.FC = () => {
                 {formType === "changePassword" && "Enter new password"}
               </p>
             </div>
+
+            <p className="text-red-500 text-center mb-4">{error}</p>
+
             <AuthForm
               formType={formType}
               onSubmit={handleSubmit}
