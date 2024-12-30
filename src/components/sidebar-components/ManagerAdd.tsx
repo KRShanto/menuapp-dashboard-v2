@@ -3,9 +3,11 @@ import { db, auth, MANAGER_COLLECTION } from "@/lib/firebase";
 import { createUserWithEmailAndPassword } from "firebase/auth";
 import { collection, addDoc } from "firebase/firestore";
 import { useSidebar } from "../ui/sidebar";
+import { useState } from "react";
 
 export default function ManagerAdd() {
   const { setOpen } = useSidebar();
+  const [error, setError] = useState<string | null>(null);
 
   async function handleSubmit(data: FormData) {
     const name = data.get("name") as string;
@@ -26,8 +28,14 @@ export default function ManagerAdd() {
       });
 
       setOpen(false, undefined);
-    } catch (error) {
-      console.error("Error adding document: ", error);
+    } catch (error: any) {
+      // check if auth/email-already-in-use
+      if (error.code === "auth/email-already-in-use") {
+        setError("Email already in use");
+      } else {
+        setError("An error occurred");
+        console.error("Error adding document: ", error);
+      }
     }
   }
 
@@ -80,6 +88,8 @@ export default function ManagerAdd() {
             required
           />
         </div>
+
+        {error && <div className="text-red-500 mt-2">{error}</div>}
       </div>
       <SidebarFooter successBtnText="Add" />
     </form>

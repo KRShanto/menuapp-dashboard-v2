@@ -5,6 +5,7 @@ import SelectComponent from "./SelectComponent";
 import { db, MENU_COLLECTION, storage } from "@/lib/firebase";
 import { collection, onSnapshot, query, orderBy } from "firebase/firestore";
 import { getDownloadURL, ref } from "firebase/storage";
+import { deleteDoc, doc } from "firebase/firestore";
 
 export default function ShowAllItem() {
   const [selectedItems, setSelectedItems] = useState<string[]>([]);
@@ -47,6 +48,15 @@ export default function ShowAllItem() {
     setSelectedItems([]);
   };
   const consfirmationTitle = "Are You Sure to Delete Selected Items?";
+
+  async function handleDelete(id: string) {
+    try {
+      await deleteDoc(doc(db, MENU_COLLECTION, id));
+    } catch (error) {
+      console.error("Error deleting documents: ", error);
+    }
+  }
+
   return (
     <div className="space-y-4">
       <SelectComponent
@@ -56,6 +66,7 @@ export default function ShowAllItem() {
         titleText={consfirmationTitle}
         isSelected={selectedItems.length === list.length}
         onSelect={selectAll}
+        onDelete={handleDelete}
       />
       <div className="grid grid-cols-4 grid-rows-2 gap-3 md:grid-cols-3 md:grid-rows-3 lg:grid-cols-4 lg:grid-rows-2 ">
         {list.map((item, index) => {

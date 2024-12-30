@@ -4,13 +4,25 @@ import { useForm } from "react-hook-form";
 import { z } from "zod";
 import SidebarFooter from "../sidebar/SidebarFooter";
 import { useSidebar } from "../ui/sidebar";
+import {
+  deleteObject,
+  getDownloadURL,
+  ref,
+  uploadBytes,
+} from "firebase/storage";
+import {
+  db,
+  MANAGER_COLLECTION,
+  MANAGER_DEFAULT_IMAGE,
+  storage,
+} from "@/lib/firebase";
+import { doc, updateDoc } from "firebase/firestore";
 
 // Define the Zod schema
 const schema = z.object({
   name: z.string().min(1, "Name is required"),
   email_address: z.string().email("Invalid email address"),
   phone: z.string().min(1, "Phone number is required"),
-  image: z.instanceof(File).nullable().optional(),
 });
 type FormInputData = z.infer<typeof schema>;
 
@@ -18,7 +30,6 @@ export default function ManagerEdit() {
   const {
     register,
     setValue,
-    watch,
     formState: { errors, isValid },
   } = useForm<FormInputData>({
     resolver: zodResolver(schema),
@@ -27,14 +38,13 @@ export default function ManagerEdit() {
       name: "",
       email_address: "",
       phone: "",
-      image: null,
     },
   });
 
-  const image = watch("image");
+  const [imageChanged, setImageChanged] = useState(false);
+  const { setOpen, sidebarData } = useSidebar();
+  const [image, setImage] = useState<File | null>(null);
   const [imageURL, setImageURL] = useState<string | null>(null);
-
-  const { setOpen } = useSidebar();
 
   useEffect(() => {
     if (image instanceof File) {
@@ -51,38 +61,43 @@ export default function ManagerEdit() {
     }
   }, [image]);
 
+  useEffect(() => {
+    setValue("name", sidebarData.name);
+    setValue("email_address", sidebarData.email);
+    setValue("phone", sidebarData.phone);
+    setImageURL(sidebarData.imageURL);
+  }, [sidebarData, setValue]);
+
   async function onSubmit(data: FormData) {
-    console.log("Form Submitted", data);
+    const name = data.get("name");
+    const email = data.get("email_address");
+    const phone = data.get("phone");
 
-    // const name = data.get("name");
-    // const email = data.get("email_address");
-    // const username = data.get("username");
-    // const phone = data.get("phone");
-
-    // eslint-disable-next-line prefer-const
-    // let imageURL = null;
+    let imageURL = null;
 
     try {
-      // TODO Upload image to Firebase Storage
-      /*
-      if (data.image) {
-        const storageRef = ref(storage, `images/${data.image.name}`);
-        await uploadBytes(storageRef, data.image);
-        const imageURL = await getDownloadURL(storageRef);
-        data.imageURL = imageURL;
+      // Upload image to Firebase Storage
+      if (imageChanged && image) {
+        const storageRef = ref(storage, `images/${image?.name}`);
+        await uploadBytes(storageRef, image);
+        const url = await getDownloadURL(storageRef);
+        imageURL = url;
+
+        // delete old image
+        if (sidebarData.imageURL !== MANAGER_DEFAULT_IMAGE) {
+          const oldImageRef = ref(storage, sidebarData.imageURL);
+          // Delete the file
+          await deleteObject(oldImageRef);
+        }
       }
-        */
 
-      // Add data to Firestore
-      // await addDoc(collection(db, MENU_COLLECTION), {
-      //   name: data.name,
-      //   email: data.email_address,
-      //   phone: data.phone,
-      //   username: data.username,
-      //   imageURL: null,
-      // });
-
-      console.log("Data uploaded successfully");
+      // Update doc in Firestore
+      await updateDoc(doc(db, MANAGER_COLLECTION, sidebarData.id), {
+        name,
+        email,
+        phone,
+        imageURL,
+      });
 
       // Close the sidebar
       setOpen(false, undefined);
@@ -109,13 +124,13 @@ export default function ManagerEdit() {
 
           {/* File input to select image */}
           <input
-            {...register("image")}
             id="file"
             type="file"
             accept="image/*"
             onChange={(e) => {
               if (e.target.files && e.target.files[0]) {
-                setValue("image", e.target.files[0]);
+                setImage(e.target.files[0]);
+                setImageChanged(true);
               }
             }}
             className="hidden"
@@ -141,7 +156,7 @@ export default function ManagerEdit() {
           </label>
           <input
             {...register("name")}
-            value="Fahim"
+            value={sidebarData.name}
             className="h-8 w-full rounded-md border border-foreground/70 bg-transparent p-2 px-3 placeholder-foreground/70 outline-none"
           />
           {errors.name && (
@@ -160,7 +175,7 @@ export default function ManagerEdit() {
           <input
             {...register("email_address")}
             type="email"
-            value="fahim@gmail.com"
+            value={sidebarData.email}
             className="h-8 w-full rounded-md border border-foreground/70 bg-transparent p-2 px-3 placeholder-foreground/70 outline-none"
           />
           {errors.email_address && (
@@ -179,7 +194,7 @@ export default function ManagerEdit() {
           <input
             {...register("phone")}
             type="tel"
-            value="01700000000"
+            value={sidebarData.phone}
             className="h-8 w-full rounded-md border border-foreground/70 bg-transparent p-2 px-3 placeholder-foreground/70 outline-none"
           />
           {errors.phone && (

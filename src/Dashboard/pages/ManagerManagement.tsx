@@ -4,39 +4,58 @@ import OptionOpener from "@/components/sidebar/OptionOpener";
 import OptionButton from "@/components/sidebar/OptionButton";
 import { RiDeleteBin7Line } from "react-icons/ri";
 import { IoAddOutline } from "react-icons/io5";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Checkbox } from "antd";
 import { useSidebar } from "@/components/ui/sidebar";
+import { collection, deleteDoc, doc, onSnapshot } from "firebase/firestore";
+import {
+  db,
+  MANAGER_COLLECTION,
+  MANAGER_DEFAULT_IMAGE,
+  storage,
+} from "@/lib/firebase";
+import { getDownloadURL, ref } from "firebase/storage";
+
 interface Manager {
-  id: number;
+  id: string;
   name: string;
   email: string;
   phone: string;
-  image: string;
+  imageURL: string;
 }
-const managers: Manager[] = [
-  {
-    id: 1,
-    name: "Fahim Ahmed",
-    email: "abc@gmail.com",
-    phone: "0966 234 567 543",
-    image:
-      "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=32&h=32&fit=crop&crop=face",
-  },
-  {
-    id: 2,
-    name: "Mashoor faisal",
-    email: "abc@gmail.com",
-    phone: "0966 234 567 543",
-    image:
-      "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=32&h=32&fit=crop&crop=face",
-  },
-];
+
 const ManagerList = () => {
   const { setOpen, open } = useSidebar();
+  const [managers, setManagers] = useState<Manager[]>([]);
   const consfirmationTitle = "Are You Sure to Delete Selected Managers?";
   const [deleteCLicked, setDeleteClicked] = useState(false);
-  const [selectedManagers, setSelectedManagers] = useState<number[]>([]);
+  const [selectedManagers, setSelectedManagers] = useState<string[]>([]);
+
+  useEffect(() => {
+    const fetchMenu = () => {
+      const managerCollection = collection(db, MANAGER_COLLECTION);
+      const unsub = onSnapshot(managerCollection, (snapshot) => {
+        const menuList = snapshot.docs.map(async (doc) => {
+          const src = doc.data().imageURL
+            ? await getDownloadURL(ref(storage, doc.data().imageURL))
+            : MANAGER_DEFAULT_IMAGE;
+          return {
+            ...doc.data(),
+            id: doc.id,
+            imageURL: src,
+          };
+        });
+        Promise.all(menuList).then((items) => {
+          setManagers(items as Manager[]);
+        });
+        // console.log("menuList", menuList);
+      });
+      return unsub;
+    };
+    const unsub = fetchMenu();
+    return () => unsub();
+  }, []);
+
   const handleSelectAll = () => {
     if (selectedManagers.length === managers.length) {
       setSelectedManagers([]);
@@ -45,13 +64,23 @@ const ManagerList = () => {
     }
   };
 
-  const handleSelect = (id: number) => {
+  const handleSelect = (id: string) => {
     setSelectedManagers((prev) =>
       prev.includes(id)
         ? prev.filter((managerId) => managerId !== id)
         : [...prev, id]
     );
   };
+
+  async function handleDelete(id: string) {
+    try {
+      // TODO: delete the user first
+      await deleteDoc(doc(db, MANAGER_COLLECTION, id));
+    } catch (error) {
+      console.error("Error deleting documents: ", error);
+    }
+  }
+
   return (
     <div>
       {deleteCLicked && (
@@ -61,6 +90,7 @@ const ManagerList = () => {
           selectedItems={selectedManagers.map(String)}
           cancelSelection={() => setSelectedManagers([])}
           isSelected={selectedManagers.length === managers.length}
+          onDelete={handleDelete}
         />
       )}
       <div className="w-full max-w-6xl mx-auto p-6 text-primary-color">
@@ -78,7 +108,7 @@ const ManagerList = () => {
               </tr>
             </thead>
             <tbody>
-              {managers.map((manager) => (
+              {managers.map((manager, index) => (
                 <tr
                   key={manager.id}
                   className="border-b border-[#7A766E] hover:bg-gray-800/50 transition-colors"
@@ -92,10 +122,10 @@ const ManagerList = () => {
                         />
                       )}
                       <span className="">
-                        {String(manager.id).padStart(2, "0")}
+                        {String(index + 1).padStart(2, "0")}
                       </span>
                       <img
-                        src={manager.image}
+                        src={manager.imageURL}
                         alt={manager.name}
                         className="w-8 h-8 rounded-full object-cover"
                       />
@@ -114,7 +144,9 @@ const ManagerList = () => {
                   </td>
                   <td className="px-6 py-4">
                     {/* icon of edit */}
-                    <button onClick={() => setOpen(true, "MANAGER_EDIT")}>
+                    <button
+                      onClick={() => setOpen(true, "MANAGER_EDIT", manager)}
+                    >
                       <CiEdit />
                     </button>
                   </td>

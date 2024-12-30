@@ -7,6 +7,7 @@ interface SelectionProps {
   titleText?: string;
   isSelected?: boolean;
   onSelect?: () => void;
+  onDelete?: (id: string) => void;
 }
 export default function SelectComponent({
   selectAll,
@@ -15,6 +16,7 @@ export default function SelectComponent({
   titleText,
   isSelected,
   onSelect,
+  onDelete,
 }: SelectionProps) {
   return (
     <div className="flex items-center justify-between bg-navbgprimary p-2 text-primary-color rounded-lg">
@@ -37,6 +39,7 @@ export default function SelectComponent({
         <AlertDialogConfirm
           title={titleText}
           selectedItems={selectedItems || []}
+          onDelete={onDelete}
         />
       </div>
     </div>

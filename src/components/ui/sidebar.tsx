@@ -30,8 +30,9 @@ const SIDEBAR_KEYBOARD_SHORTCUT = "b";
 type SidebarContext = {
   state: "expanded" | "collapsed";
   sidebarType: SidebarType;
+  sidebarData?: any;
   open: boolean;
-  setOpen: (open: boolean, sidebarType: SidebarType) => void;
+  setOpen: (open: boolean, sidebarType: SidebarType, data?: any) => void;
   openMobile: boolean;
   setOpenMobile: (open: boolean) => void;
   isMobile: boolean;
@@ -74,13 +75,18 @@ const SidebarProvider = React.forwardRef<
     const [sidebarType, setSidebarType] = React.useState<
       SidebarType | undefined
     >(undefined);
+    const [sidebarData, setSidebarData] = React.useState<any>(null);
 
     // This is the internal state of the sidebar.
     // We use openProp and setOpenProp for control from outside the component.
     const [_open, _setOpen] = React.useState(defaultOpen);
     const open = openProp ?? _open;
     const setOpen = React.useCallback(
-      (value: boolean | ((value: boolean) => boolean), type?: SidebarType) => {
+      (
+        value: boolean | ((value: boolean) => boolean),
+        type?: SidebarType,
+        data?: any
+      ) => {
         const openState = typeof value === "function" ? value(open) : value;
         if (setOpenProp) {
           setOpenProp(openState);
@@ -91,9 +97,12 @@ const SidebarProvider = React.forwardRef<
         // This sets the cookie to keep the sidebar state.
         document.cookie = `${SIDEBAR_COOKIE_NAME}=${openState}; path=/; max-age=${SIDEBAR_COOKIE_MAX_AGE}`;
 
-        // Set the sidebar type if provided
+        // Set the sidebar type and data if provided
         if (type) {
           setSidebarType(type);
+        }
+        if (data) {
+          setSidebarData(data);
         }
       },
       [setOpenProp, open]
@@ -130,6 +139,7 @@ const SidebarProvider = React.forwardRef<
       () => ({
         state,
         sidebarType,
+        sidebarData,
         open,
         setOpen,
         isMobile,
@@ -140,6 +150,7 @@ const SidebarProvider = React.forwardRef<
       [
         state,
         sidebarType,
+        sidebarData,
         open,
         setOpen,
         isMobile,

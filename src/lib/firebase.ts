@@ -25,5 +25,6 @@ export const MANAGER_COLLECTION = import.meta.env.PROD
   ? "manager__production"
   : "development__manager";
 export const STORAGE_BASE = import.meta.env.PROD ? "production" : "development";
+export const MANAGER_DEFAULT_IMAGE = "/user-image.png";
 
 export const MENU_IMAGES = `${STORAGE_BASE}/menu-images`;
