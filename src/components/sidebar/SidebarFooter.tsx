@@ -1,3 +1,4 @@
+// @ts-ignore
 import { useFormStatus } from "react-dom";
 import { useSidebar } from "../ui/sidebar";
 import { cn } from "@/lib/utils";

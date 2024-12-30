@@ -18,4 +18,9 @@ export const storage = getStorage(app);
 export const auth = getAuth();
 
 // name of the collections
-export const MENU_COLLECTION = "menu";
+export const MENU_COLLECTION = import.meta.env.PROD
+  ? "menu-production"
+  : "menu";
+export const STORAGE_BASE = import.meta.env.PROD ? "production" : "development";
+
+export const MENU_IMAGES = `${STORAGE_BASE}/menu-images`;

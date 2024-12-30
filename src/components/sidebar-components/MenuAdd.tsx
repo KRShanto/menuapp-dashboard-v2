@@ -1,11 +1,13 @@
-import { db, MENU_COLLECTION } from "@/lib/firebase";
+import { db, MENU_COLLECTION, MENU_IMAGES } from "@/lib/firebase";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { addDoc, collection } from "firebase/firestore";
+import { storage } from "@/lib/firebase";
 import { useEffect, useState } from "react"; // Added useEffect and useState
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import SidebarFooter from "../sidebar/SidebarFooter";
 import { useSidebar } from "../ui/sidebar";
+import { ref, uploadBytes } from "firebase/storage";
 
 // Define the Zod schema
 const schema = z.object({
@@ -23,22 +25,21 @@ export default function MenuAdd() {
   const {
     register,
     setValue,
-    watch,
     formState: { errors, isValid },
   } = useForm<FormInputData>({
     resolver: zodResolver(schema),
-    mode: "onChange", // Enable real-time validation
+    mode: "onChange",
     defaultValues: {
       name: "",
       category: "",
-      price: null, // Set to null
+      price: null,
       description: "",
-      calories: null, // Set to null
-      image: undefined, // Change from null to undefined
+      calories: null,
+      image: null,
     },
   });
 
-  const image = watch("image");
+  const [image, setImage] = useState<File | null>(null);
   const [imageURL, setImageURL] = useState<string | null>(null);
 
   const { setOpen } = useSidebar();
@@ -66,20 +67,18 @@ export default function MenuAdd() {
     const price = data.get("price");
     const description = data.get("description");
     const calories = data.get("calories");
-
-    // eslint-disable-next-line prefer-const
-    let imageURL = null;
+    console.log("Uploading image: ", image);
 
     try {
-      // TODO Upload image to Firebase Storage
-      /*
-      if (data.image) {
-        const storageRef = ref(storage, `images/${data.image.name}`);
-        await uploadBytes(storageRef, data.image);
-        const imageURL = await getDownloadURL(storageRef);
-        data.imageURL = imageURL;
+      console.log("Uploading image: ");
+      // Upload image to Firebase Storage
+      if (image instanceof File) {
+        const imageRef = ref(storage, `${MENU_IMAGES}/${image.name}`);
+
+        const res = await uploadBytes(imageRef, image);
+
+        console.log("Image uploaded successfully: ", res);
       }
-        */
 
       // Add data to Firestore
       await addDoc(collection(db, MENU_COLLECTION), {
@@ -88,11 +87,11 @@ export default function MenuAdd() {
         price: price,
         description: description,
         calories: calories,
-        imageURL: imageURL || null,
+        imageURL: `${MENU_IMAGES}/${image?.name}`,
         createdAt: new Date(),
       });
 
-      console.log("Data uploaded successfully");
+      // console.log("Data uploaded successfully");
 
       // Close the sidebar
       setOpen(false, undefined);
@@ -119,13 +118,14 @@ export default function MenuAdd() {
 
           {/* File input to select image */}
           <input
-            {...register("image")}
             id="file"
             type="file"
             accept="image/*"
             onChange={(e) => {
-              if (e.target.files && e.target.files[0]) {
-                setValue("image", e.target.files[0]);
+              const file = e.target.files?.[0];
+              if (file instanceof File) {
+                setImage(file);
+                setValue("image", file);
               }
             }}
             className="hidden"

@@ -2,8 +2,9 @@ import { useEffect, useState } from "react";
 import { ItemsType } from "../../types/Item";
 import FoodItemCard from "./FoodItemCard";
 import SelectComponent from "./SelectComponent";
-import { db, MENU_COLLECTION } from "@/lib/firebase";
+import { db, MENU_COLLECTION, storage } from "@/lib/firebase";
 import { collection, onSnapshot, query, orderBy } from "firebase/firestore";
+import { getDownloadURL, ref } from "firebase/storage";
 
 export default function ShowAllItem() {
   const [selectedItems, setSelectedItems] = useState<string[]>([]);
@@ -15,12 +16,18 @@ export default function ShowAllItem() {
       const menuCollection = collection(db, MENU_COLLECTION);
       const q = query(menuCollection, orderBy("createdAt", "desc"));
       const unsub = onSnapshot(q, (snapshot) => {
-        const menuList = snapshot.docs.map((doc) => ({
-          ...doc.data(),
-          id: doc.id,
-        }));
-        console.log("menuList", menuList);
-        setList(menuList as ItemsType[]);
+        const menuList = snapshot.docs.map(async (doc) => {
+          const src = await getDownloadURL(ref(storage, doc.data().imageURL));
+          return {
+            ...doc.data(),
+            id: doc.id,
+            imageURL: src,
+          };
+        });
+        Promise.all(menuList).then((items) => {
+          setList(items as ItemsType[]);
+        });
+        // console.log("menuList", menuList);
       });
       return unsub;
     };
@@ -57,11 +64,7 @@ export default function ShowAllItem() {
               <FoodItemCard
                 name={item.name}
                 description={item.description}
-                image={
-                  item.image ||
-                  // TODO: remove this.
-                  "https://images.unsplash.com/photo-1550547660-d9450f859349"
-                }
+                image={item.imageURL}
                 calories={item.calories}
                 price={item.price}
                 isSelected={selectedItems.includes(item.id)}

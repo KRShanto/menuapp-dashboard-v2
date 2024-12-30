@@ -6,4 +6,5 @@ export type ItemsType = {
   price: number;
   calories: number;
   createdAt: number;
+  imageURL: string;
 };
