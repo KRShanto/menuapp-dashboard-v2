@@ -1,13 +1,11 @@
-import { db, MENU_COLLECTION, MENU_IMAGES } from "@/lib/firebase";
+import { db, MENU_COLLECTION } from "@/lib/firebase";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { addDoc, collection } from "firebase/firestore";
-import { storage } from "@/lib/firebase";
 import { useEffect, useState } from "react"; // Added useEffect and useState
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import SidebarFooter from "../sidebar/SidebarFooter";
 import { useSidebar } from "../ui/sidebar";
-import { ref, uploadBytes } from "firebase/storage";
 
 // Define the Zod schema
 const schema = z.object({
@@ -21,25 +19,26 @@ const schema = z.object({
 
 type FormInputData = z.infer<typeof schema>;
 
-export default function MenuEdit() {
+export default function ApprovalEdit() {
   const {
     register,
     setValue,
+    watch,
     formState: { errors, isValid },
   } = useForm<FormInputData>({
     resolver: zodResolver(schema),
-    mode: "onChange",
+    mode: "onChange", // Enable real-time validation
     defaultValues: {
       name: "",
       category: "",
-      price: null,
+      price: null, // Set to null
       description: "",
-      calories: null,
-      image: null,
+      calories: null, // Set to null
+      image: undefined, // Change from null to undefined
     },
   });
 
-  const [image, setImage] = useState<File | null>(null);
+  const image = watch("image");
   const [imageURL, setImageURL] = useState<string | null>(null);
 
   const { setOpen } = useSidebar();
@@ -67,18 +66,20 @@ export default function MenuEdit() {
     const price = data.get("price");
     const description = data.get("description");
     const calories = data.get("calories");
-    console.log("Uploading image: ", image);
+
+    // eslint-disable-next-line prefer-const
+    let imageURL = null;
 
     try {
-      console.log("Uploading image: ");
-      // Upload image to Firebase Storage
-      if (image instanceof File) {
-        const imageRef = ref(storage, `${MENU_IMAGES}/${image.name}`);
-
-        const res = await uploadBytes(imageRef, image);
-
-        console.log("Image uploaded successfully: ", res);
+      // TODO Upload image to Firebase Storage
+      /*
+      if (data.image) {
+        const storageRef = ref(storage, `images/${data.image.name}`);
+        await uploadBytes(storageRef, data.image);
+        const imageURL = await getDownloadURL(storageRef);
+        data.imageURL = imageURL;
       }
+        */
 
       // Add data to Firestore
       await addDoc(collection(db, MENU_COLLECTION), {
@@ -87,11 +88,11 @@ export default function MenuEdit() {
         price: price,
         description: description,
         calories: calories,
-        imageURL: `${MENU_IMAGES}/${image?.name}`,
+        imageURL: imageURL || null,
         createdAt: new Date(),
       });
 
-      // console.log("Data uploaded successfully");
+      console.log("Data uploaded successfully");
 
       // Close the sidebar
       setOpen(false, undefined);
@@ -118,14 +119,13 @@ export default function MenuEdit() {
 
           {/* File input to select image */}
           <input
+            {...register("image")}
             id="file"
             type="file"
             accept="image/*"
             onChange={(e) => {
-              const file = e.target.files?.[0];
-              if (file instanceof File) {
-                setImage(file);
-                setValue("image", file);
+              if (e.target.files && e.target.files[0]) {
+                setValue("image", e.target.files[0]);
               }
             }}
             className="hidden"
@@ -137,7 +137,7 @@ export default function MenuEdit() {
               htmlFor="file"
               className="cursor-pointer rounded-md bg-foreground px-10 text-black"
             >
-              Change Image
+              Add Image
             </label>
           </div>
         </div>
@@ -234,7 +234,7 @@ export default function MenuEdit() {
       </div>
 
       <SidebarFooter
-        successBtnText="Save"
+        successBtnText="Add"
         disabled={!isValid} // Use formState.isValid
       />
     </form>

@@ -7,7 +7,11 @@ import { collection, onSnapshot, query, orderBy } from "firebase/firestore";
 import { getDownloadURL, ref } from "firebase/storage";
 import { deleteDoc, doc } from "firebase/firestore";
 
-export default function ShowAllItem() {
+export default function ShowAllItem({
+  isDeleteClicked,
+}: {
+  isDeleteClicked: boolean;
+}) {
   const [selectedItems, setSelectedItems] = useState<string[]>([]);
   const [list, setList] = useState<ItemsType[]>([]);
 
@@ -41,8 +45,12 @@ export default function ShowAllItem() {
       prev.includes(id) ? prev.filter((i) => i !== id) : [...prev, id]
     );
   };
-  const selectAll = () => {
-    setSelectedItems(list.map((item) => item.id));
+  const handleSelectAll = () => {
+    if (selectedItems.length === list.length) {
+      setSelectedItems([]);
+    } else {
+      setSelectedItems(list.map((li) => li.id));
+    }
   };
   const cancelSelection = () => {
     setSelectedItems([]);
@@ -61,15 +69,16 @@ export default function ShowAllItem() {
 
   return (
     <div className="space-y-4">
-      <SelectComponent
-        selectAll={selectAll}
-        selectedItems={selectedItems}
-        cancelSelection={cancelSelection}
-        titleText={consfirmationTitle}
-        isSelected={selectedItems.length === list.length}
-        onSelect={selectAll}
-        onDelete={handleDelete}
-      />
+      {isDeleteClicked && (
+        <SelectComponent
+          selectAll={handleSelectAll}
+          selectedItems={selectedItems}
+          cancelSelection={cancelSelection}
+          titleText={consfirmationTitle}
+          isSelected={selectedItems.length === list.length}
+          onDelete={handleDelete}
+        />
+      )}
       <div className="grid grid-cols-4 grid-rows-2 gap-3 md:grid-cols-3 md:grid-rows-3 lg:grid-cols-4 lg:grid-rows-2 ">
         {list.map((item, index) => {
           return (
@@ -82,6 +91,7 @@ export default function ShowAllItem() {
                 price={item.price}
                 isSelected={selectedItems.includes(item.id)}
                 onSelect={() => handleSelect(item.id)}
+                isDeleteClicked={isDeleteClicked}
               />
             </div>
           );

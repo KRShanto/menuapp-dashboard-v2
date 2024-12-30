@@ -1,5 +1,6 @@
 import { ArrowRight } from "lucide-react";
 import { Checkbox } from "antd";
+import { useSidebar } from "@/components/ui/sidebar";
 
 interface FoodCardProps {
   image: string;
@@ -9,6 +10,7 @@ interface FoodCardProps {
   calories: number;
   isSelected: boolean;
   onSelect: () => void;
+  isDeleteClicked?: boolean;
 }
 const FoodItemCard = ({
   image,
@@ -18,14 +20,18 @@ const FoodItemCard = ({
   calories,
   onSelect,
   isSelected,
+  isDeleteClicked,
 }: FoodCardProps) => {
+  const { setOpen } = useSidebar();
   return (
     <div className="relative">
-      <Checkbox
-        onChange={onSelect}
-        checked={isSelected}
-        className="absolute z-30 top-4 left-4"
-      />
+      {isDeleteClicked && (
+        <Checkbox
+          onChange={onSelect}
+          checked={isSelected}
+          className="absolute z-30 top-4 left-4"
+        />
+      )}
       <div className="group w-full h-72 max-w-md rounded-lg bg-navbgprimary  p-1.5 space-y-2">
         <div className="relative aspect-square w-full overflow-hidden rounded-lg">
           <img
@@ -44,7 +50,10 @@ const FoodItemCard = ({
                 {calories} Calories
               </span>
             </div>
-            <button className="w-full flex text-black bg-primary-color px-2 py-2 rounded-lg items-center justify-center mt-2">
+            <button
+              className="w-full flex text-black bg-primary-color px-2 py-2 rounded-lg items-center justify-center mt-2"
+              onClick={() => setOpen(true, "MENU_EDIT")}
+            >
               <span className="mr-2">See Details</span>
               <ArrowRight className="h-4 w-4 " />
             </button>

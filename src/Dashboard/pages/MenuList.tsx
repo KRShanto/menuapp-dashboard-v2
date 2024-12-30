@@ -7,13 +7,14 @@ import { IoAddOutline } from "react-icons/io5";
 export default function MenuList() {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [testShow, setTestShow] = useState(false);
+  const [deleteCLicked, setDeleteClicked] = useState(false);
   return (
     <div className="h-full">
       <h1 className="text-primary-color text-3xl font-semibold">
         All Menu Items
       </h1>
       <OptionOpener>
-        <OptionButton>
+        <OptionButton onClick={() => setDeleteClicked(true)}>
           {" "}
           <span className="inline-flex items-center justify-between w-[95px]">
             Delete Item
@@ -33,7 +34,7 @@ export default function MenuList() {
           <div>No Food Items are Added</div>
         </div>
       ) : (
-        <ShowAllItem />
+        <ShowAllItem isDeleteClicked={deleteCLicked} />
       )}
     </div>
   );

@@ -165,7 +165,7 @@ const MenuApproval = () => {
                       size={8}
                     />
                   </button>
-                  <button onClick={() => setOpen(true, "MENU_EDIT")}>
+                  <button onClick={() => setOpen(true, "APPROVAL_EDIT")}>
                     <VscEye
                       className="h-6 w-6 bg-primary-color rounded-full"
                       color="black"

@@ -38,7 +38,16 @@ export default function DiscountAdd() {
             <RiPercentFill />
           </span>
         </div>
-        <FoodSelectDiscount />
+        <div className="relative mt-5">
+          <label
+            className="absolute -top-3 left-2 z-20 text-nowrap bg-[#2B2A2C] px-2 text-sm text-foreground/70"
+            htmlFor="category"
+          >
+            Discount Items
+          </label>
+          <FoodSelectDiscount />
+        </div>
+
         <div className="relative mt-5">
           <label
             className="absolute -top-3 left-2 z-20 text-nowrap bg-[#2B2A2C] px-2 text-sm text-foreground/70"
@@ -64,7 +73,7 @@ export default function DiscountAdd() {
           />
         </div>
       </div>
-      <SidebarFooter successBtnText="Add"  />
+      <SidebarFooter successBtnText="Add" />
     </form>
   );
 }

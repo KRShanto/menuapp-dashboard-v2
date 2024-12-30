@@ -71,9 +71,10 @@ const FOOD_OPTIONS: DiscountCategory[] = [
 ];
 
 export default function FoodSelectDiscount() {
-  const [selectedOptions, setSelectedOptions] = useState<DiscountCategory[]>(
-    []
-  );
+  const [selectedItem, setSelectedItem] = useState<{
+    id: number;
+    name: string;
+  } | null>(null);
   const [isOpen, setIsOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
 
@@ -96,35 +97,20 @@ export default function FoodSelectDiscount() {
     setIsOpen((prev) => !prev);
   };
 
-  const handleOptionClick = (option: DiscountCategory) => {
-    const alreadySelected = selectedOptions.some((o) => o.id === option.id);
-    if (alreadySelected) {
-      setSelectedOptions(selectedOptions.filter((o) => o.id !== option.id));
-    } else {
-      setSelectedOptions([...selectedOptions, option]);
-    }
-  };
-
-  const handleRemove = (optionId: number | string) => {
-    setSelectedOptions(
-      selectedOptions.filter((option) => option.id !== optionId)
-    );
+  const handleOptionClick = (item: { id: number; name: string }) => {
+    setSelectedItem(item);
+    setIsOpen(false);
   };
 
   return (
     <div className="relative w-full mt-5" ref={dropdownRef}>
-      {/* Selected Options as Tags */}
-
-      {/* Dropdown Trigger Button */}
       <button
         type="button"
         onClick={handleToggle}
         className="flex justify-between p-2 px-3 w-full rounded-md border border-foreground/70 bg-transparent  placeholder-foreground/70 outline-none  text-left"
       >
         <span className="text-sm text-foreground/70">
-          {selectedOptions.length === 0
-            ? "Select Your Discount Items"
-            : "Seleted Items for Discount"}
+          {selectedItem ? selectedItem.name : "Select Your Discount Items"}
         </span>
         <FaChevronDown />
       </button>
@@ -141,7 +127,6 @@ export default function FoodSelectDiscount() {
             rounded-md 
             border 
             border-primary-color 
-           
             shadow-lg 
             max-h-44 
             overflow-y-auto
@@ -150,12 +135,12 @@ export default function FoodSelectDiscount() {
           {FOOD_OPTIONS.map((food) => {
             return (
               <div key={food.id}>
-                <span>{food.name}</span>
+                <span className="px-3 py-2 text-lg">{food.name}</span>
 
                 {food.items.map((item) => (
                   <div
                     key={item.id}
-                    onClick={() => handleOptionClick(food)}
+                    onClick={() => handleOptionClick(item)}
                     className={`
                      flex
                      cursor-pointer
@@ -166,7 +151,7 @@ export default function FoodSelectDiscount() {
                   >
                     <img
                       src={item.image}
-                      alt="foodfor discount {food.name}"
+                      alt="food for discount ${food.name}"
                       className="w-8 h-8 mr-2 rounded-full"
                     />
                     <span>{item.name}</span>
@@ -177,25 +162,6 @@ export default function FoodSelectDiscount() {
           })}
         </div>
       )}
-      <div className="w-full rounded-md  outline-none max-h-44 overflow-y-auto border border-foreground/70 bg-transparent  placeholder-foreground/70">
-        <div className="flex flex-wrap gap-2 mt-2 mx-auto justify-center p-2">
-          {selectedOptions.map((option) => (
-            <div
-              key={option.id}
-              className="w-[40%] flex items-center rounded-full  px-3 py-2 text-sm bg-[#1F1F20] text-primary-color justify-between"
-            >
-              <span className="mr-1">{option.name}</span>
-              <button
-                onClick={() => handleRemove(option.id)}
-                className="text-gray-600 hover:text-gray-800"
-                aria-label={`Remove ${option.name}`}
-              >
-                <X size={14} />
-              </button>
-            </div>
-          ))}
-        </div>
-      </div>
     </div>
   );
 }
