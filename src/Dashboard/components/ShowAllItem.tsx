@@ -57,6 +57,8 @@ export default function ShowAllItem() {
     }
   }
 
+  console.log("List:  ", list);
+
   return (
     <div className="space-y-4">
       <SelectComponent
