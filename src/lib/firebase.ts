@@ -24,6 +24,10 @@ export const MENU_COLLECTION = import.meta.env.PROD
   : "development__menu";
 export const MENU_IMAGES = `${STORAGE_BASE}/menu-images`;
 
+export const DISCOUNT_COLLECTION = import.meta.env.PROD
+  ? "production__discount"
+  : "development__discount";
+
 export const MANAGER_COLLECTION = import.meta.env.PROD
   ? "production__manager"
   : "development__manager";
