@@ -9,8 +9,10 @@ import { deleteDoc, doc } from "firebase/firestore";
 
 export default function ShowAllItem({
   isDeleteClicked,
+  setIsDeleteClicked,
 }: {
   isDeleteClicked: boolean;
+  setIsDeleteClicked: (value: boolean) => void;
 }) {
   const [selectedItems, setSelectedItems] = useState<string[]>([]);
   const [list, setList] = useState<ItemsType[]>([]);
@@ -54,20 +56,36 @@ export default function ShowAllItem({
   };
   const cancelSelection = () => {
     setSelectedItems([]);
+    if (selectedItems.length === 0) {
+      setIsDeleteClicked(false);
+    }
   };
   const consfirmationTitle = "Are You Sure to Delete Selected Items?";
 
   async function handleDelete(id: string) {
     try {
       await deleteDoc(doc(db, MENU_COLLECTION, id));
+      const updatedList = list.filter((item) => item.id !== id);
+      setSelectedItems((prevSelected) =>
+        prevSelected.filter((itemId) => itemId !== id)
+      );
+      if (updatedList.length === 0) {
+        setSelectedItems([]);
+      }
     } catch (error) {
       console.error("Error deleting documents: ", error);
     }
   }
+  useEffect(() => {
+    // Clear selectedItems if the list is empty
+    if (list.length === 0) {
+      setSelectedItems([]);
+    }
+  }, [list]);
 
   return (
     <div className="space-y-4">
-      {isDeleteClicked && (
+      {isDeleteClicked && list.length !== 0 && (
         <SelectComponent
           selectAll={handleSelectAll}
           selectedItems={selectedItems}

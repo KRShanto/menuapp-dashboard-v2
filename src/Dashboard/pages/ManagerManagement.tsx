@@ -71,7 +71,12 @@ const ManagerList = () => {
         : [...prev, id]
     );
   };
-
+  const cancelSelection = () => {
+    setSelectedManagers([]);
+    if (selectedManagers.length === 0) {
+      setDeleteClicked(false);
+    }
+  };
   async function handleDelete(id: string) {
     try {
       // TODO: delete the user first
@@ -83,18 +88,19 @@ const ManagerList = () => {
 
   return (
     <div>
-      {deleteCLicked && (
-        <SelectComponent
-          titleText={consfirmationTitle}
-          selectAll={handleSelectAll}
-          selectedItems={selectedManagers.map(String)}
-          cancelSelection={() => setSelectedManagers([])}
-          isSelected={selectedManagers.length === managers.length}
-          onDelete={handleDelete}
-        />
-      )}
       <div className="w-full max-w-6xl mx-auto p-6 text-primary-color">
         <h1 className="text-3xl font-semibold mb-8">Manager Management</h1>
+
+        {deleteCLicked && managers.length !== 0 && (
+          <SelectComponent
+            titleText={consfirmationTitle}
+            selectAll={handleSelectAll}
+            selectedItems={selectedManagers.map(String)}
+            cancelSelection={cancelSelection}
+            isSelected={selectedManagers.length === managers.length}
+            onDelete={handleDelete}
+          />
+        )}
         <div className="rounded-lg  overflow-hidden">
           <table className="w-full">
             <thead>

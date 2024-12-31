@@ -34,7 +34,7 @@ export default function MenuList() {
           <div>No Food Items are Added</div>
         </div>
       ) : (
-        <ShowAllItem isDeleteClicked={deleteCLicked} />
+        <ShowAllItem isDeleteClicked={deleteCLicked} setIsDeleteClicked={setDeleteClicked}/>
       )}
     </div>
   );

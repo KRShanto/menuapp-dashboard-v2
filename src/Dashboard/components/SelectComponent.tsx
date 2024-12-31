@@ -31,7 +31,6 @@ export default function SelectComponent({
       <div className="space-x-2">
         <button
           onClick={cancelSelection}
-          disabled={selectedItems?.length === 0}
           className="felx  border border-[#DC3545] rounded-lg px-4 py-2 "
         >
           <span className="relative -top-0.5">Cancel</span>
