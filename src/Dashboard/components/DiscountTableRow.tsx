@@ -50,7 +50,7 @@ export function DiscountTableRow({
           <CiEdit
             size={18}
             className="text-gray-300"
-            onClick={() => setOpen(true, "DISCOUNT_EDIT")}
+            onClick={() => setOpen(true, "DISCOUNT_EDIT", discount)}
           />
         </button>
       </td>
