@@ -6,75 +6,19 @@ import { IoAddOutline } from "react-icons/io5";
 import { RiDeleteBin7Line } from "react-icons/ri";
 import { DiscountTable } from "../components/DIscountTable";
 import SelectComponent from "../components/SelectComponent";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import {
+  collection,
+  deleteDoc,
+  doc,
+  onSnapshot,
+  orderBy,
+  query,
+} from "firebase/firestore";
+import { db, DISCOUNT_COLLECTION } from "@/lib/firebase";
 
-const discounts: DiscountCategory[] = [
-  {
-    id: "1",
-    name: "Indian Specials",
-    items: [
-      {
-        id: 1,
-        name: "Tandoori Chicken",
-        image:
-          "https://plus.unsplash.com/premium_photo-1669831178095-005ed789250a?q=80&w=1974&auto=format&fit=crop",
-      },
-      {
-        id: 2,
-        name: "Chicken Soup",
-        image: "https://i.ibb.co/0jLh4Xv/tandoori-chicken.png",
-      },
-      {
-        id: 3,
-        name: "Butter Chicken",
-        image: "https://i.ibb.co/0jLh4Xv/tandoori-chicken.png",
-      },
-      {
-        id: 4,
-        name: "Biryani",
-        image: "https://i.ibb.co/0jLh4Xv/tandoori-chicken.png",
-      },
-    ],
-    rate: 10,
-    startDate: "2023-01-01",
-    endDate: "2023-12-31",
-  },
-  {
-    id: "2",
-    name: "Veg Specials",
-    items: [
-      {
-        id: 5,
-        name: "Naan",
-        image: "https://i.ibb.co/0jLh4Xv/tandoori-chicken.png",
-      },
-      {
-        id: 6,
-        name: "Dal Makhani",
-        image: "https://i.ibb.co/0jLh4Xv/tandoori-chicken.png",
-      },
-      {
-        id: 7,
-        name: "Paneer Tikka",
-        image: "https://i.ibb.co/0jLh4Xv/tandoori-chicken.png",
-      },
-      {
-        id: 8,
-        name: "Veg Korma",
-        image: "https://i.ibb.co/0jLh4Xv/tandoori-chicken.png",
-      },
-      {
-        id: 9,
-        name: "Mango Lassi",
-        image: "https://i.ibb.co/0jLh4Xv/tandoori-chicken.png",
-      },
-    ],
-    rate: 15,
-    startDate: "2023-06-01",
-    endDate: "2023-12-31",
-  },
-];
 export default function Discount() {
+  const [discounts, setDiscounts] = useState<DiscountCategory[]>([]);
   const { clickedAdd } = useDiscountStore();
   const confirmationTitle = "Are You Sure to Delete Selected Discounts?";
   const [deleteClicked, setDeleteClicked] = useState(false);
@@ -95,16 +39,53 @@ export default function Discount() {
         : [...prev, id]
     );
   };
+  const cancelSelection = () => {
+    setSelectedDiscounts([]);
+    if (selectedDiscounts.length === 0) {
+      setDeleteClicked(false);
+    }
+  };
+  useEffect(() => {
+    const fetchDiscounts = () => {
+      const discountCollection = collection(db, DISCOUNT_COLLECTION);
+      const q = query(discountCollection, orderBy("createdAt", "desc"));
+      const unsub = onSnapshot(q, (snapshot) => {
+        const menuList = snapshot.docs.map(async (doc) => {
+          return {
+            ...doc.data(),
+            id: doc.id,
+          };
+        });
+        Promise.all(menuList).then((items) => {
+          setDiscounts(items as DiscountCategory[]);
+        });
+      });
+      return unsub;
+    };
+    const unsub = fetchDiscounts();
+    return () => unsub();
+  }, []);
+
+  async function onDelete(id: string) {
+    try {
+      await deleteDoc(doc(db, DISCOUNT_COLLECTION, id));
+    } catch (error) {
+      console.error("Error deleting discount: ", error);
+      alert("Failed to delete discount");
+    }
+  }
+
   return (
     <div className="h-full">
       <h1 className="text-3xl font-semibold">Discount</h1>
-      {deleteClicked && (
+      {deleteClicked && discounts.length !== 0 && (
         <SelectComponent
           titleText={confirmationTitle}
           selectAll={handleSelectAll}
           selectedItems={selectedDiscounts}
-          cancelSelection={() => setSelectedDiscounts([])}
+          cancelSelection={cancelSelection}
           isSelected={selectedDiscounts.length === discounts.length}
+          onDelete={onDelete}
         />
       )}
       <OptionOpener>

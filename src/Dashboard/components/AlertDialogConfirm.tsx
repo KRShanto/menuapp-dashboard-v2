@@ -22,7 +22,7 @@ export function AlertDialogConfirm({
   return (
     <AlertDialog>
       <AlertDialogTrigger asChild>
-        <Button className="bg-[#DC3545]">Delete</Button>
+        <Button className="bg-[#DC3545]" disabled={selectedItems?.length === 0}>Delete</Button>
       </AlertDialogTrigger>
       <AlertDialogContent className="bg-navbgprimary rounded-lg ">
         <AlertDialogHeader>
