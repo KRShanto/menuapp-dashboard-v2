@@ -16,7 +16,12 @@ const schema = z.object({
   price: z.number().min(0, "Price must be positive").nullable(), // Allow null
   description: z.string().min(1, "Description is required"),
   calories: z.number().min(0, "Calories must be positive").nullable(), // Allow null
-  image: z.instanceof(File).nullable(), // Allow null
+  image: z
+    .instanceof(File)
+    .nullable()
+    .refine((file) => file !== null, {
+      message: "Image is required",
+    }),
 });
 
 type FormInputData = z.infer<typeof schema>;
@@ -25,6 +30,7 @@ export default function MenuAdd() {
   const {
     register,
     setValue,
+    trigger,
     formState: { errors, isValid },
   } = useForm<FormInputData>({
     resolver: zodResolver(schema),
@@ -35,7 +41,7 @@ export default function MenuAdd() {
       price: null,
       description: "",
       calories: null,
-      image: null,
+      image: undefined,
     },
   });
 
@@ -110,27 +116,26 @@ export default function MenuAdd() {
             <img
               src={imageURL}
               alt="Item"
-              className="h-60 w-full rounded-lg object-cover"
+              className="h-40 w-full rounded-lg object-cover"
             />
           ) : (
-            <div className="h-60 w-full rounded-lg bg-neutral-900/50" />
+            <div className="h-40 w-full rounded-lg bg-neutral-900/50" />
           )}
-
           {/* File input to select image */}
           <input
             id="file"
             type="file"
             accept="image/*"
-            onChange={(e) => {
+            onChange={async (e) => {
               const file = e.target.files?.[0];
               if (file instanceof File) {
                 setImage(file);
                 setValue("image", file);
+                await trigger("image");
               }
             }}
             className="hidden"
           />
-
           <div className="absolute bottom-0 right-0 rounded-tl-md bg-[#2B2A2C] p-3">
             {/* Label for file input. it should be bottom little up and little right of the image */}
             <label
@@ -140,6 +145,10 @@ export default function MenuAdd() {
               Add Image
             </label>
           </div>
+          {errors.image && (
+            <span className="text-red-500">{errors.image.message}</span>
+          )}{" "}
+          {/* Display image error */}
         </div>
 
         <div className="relative mt-4">
@@ -188,7 +197,7 @@ export default function MenuAdd() {
           <textarea
             {...register("description")}
             placeholder="Enter Description"
-            className="h-24 w-full rounded-md border border-foreground/70 bg-transparent p-2 px-3 placeholder-foreground/70 outline-none"
+            className="h-16 w-full rounded-md border border-foreground/70 bg-transparent p-2 px-3 placeholder-foreground/70 outline-none"
           />
           {errors.description && (
             <span className="text-red-500">{errors.description.message}</span>
