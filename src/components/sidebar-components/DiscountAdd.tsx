@@ -28,6 +28,7 @@ export default function DiscountAdd() {
         rate: parseFloat(rate),
         startDate,
         endDate,
+        itemName: selectedItem.name,
         itemId: selectedItem.id,
         createdAt: new Date(),
       });

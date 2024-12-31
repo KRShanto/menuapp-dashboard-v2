@@ -6,7 +6,8 @@ export interface FoodItemOption {
 export interface DiscountCategory {
   id: string;
   name: string;
-  items: FoodItemOption[];
+  itemName: string;
+  itemId: string;
   rate: number;
   startDate: string;
   endDate: string;

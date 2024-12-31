@@ -1,20 +1,10 @@
 import { useSidebar } from "@/components/ui/sidebar";
+import { DiscountCategory } from "@/types/discountType";
 import { Checkbox } from "antd";
 import { CiEdit } from "react-icons/ci";
-interface FoodItemOption {
-  id: number;
-  name: string;
-  image: string;
-}
-export interface DiscountCategory {
-  id: string;
-  name: string;
-  items: FoodItemOption[];
-  rate: number;
-  startDate: string;
-  endDate: string;
-}
+
 interface TableRowProps {
+  index: number;
   discount: DiscountCategory;
   onDelete?: (id: string) => void;
   handleSelect: (id: string) => void;
@@ -23,6 +13,7 @@ interface TableRowProps {
 }
 
 export function DiscountTableRow({
+  index,
   discount,
   onDelete,
   handleSelect,
@@ -41,20 +32,11 @@ export function DiscountTableRow({
           />
         )}
 
-        <span>{String(discount.id).padStart(2, "0")}</span>
+        <span>{String(index + 1).padStart(2, "0")}</span>
         <span>{discount.name}</span>
       </td>
       <td className="px-6 py-4 text-sm">
-        <div className="flex flex-wrap gap-2">
-          {discount.items.map((item) => (
-            <span
-              key={item.id}
-              className="bg-navbgprimary px-2 py-1 rounded-full text-xs"
-            >
-              {item.name}
-            </span>
-          ))}
-        </div>
+        <div className="flex flex-wrap gap-2">{discount.itemName}</div>
       </td>
       <td className="px-6 py-4 text-sm">{discount.rate}%</td>
       <td className="px-6 py-4 text-sm">{discount.startDate}</td>

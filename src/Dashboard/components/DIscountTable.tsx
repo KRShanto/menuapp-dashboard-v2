@@ -27,9 +27,10 @@ export function DiscountTable({
       <table className="min-w-full text-primary-color">
         <DiscountTableHeader />
         <tbody>
-          {discounts.map((discount) => (
+          {discounts.map((discount, index) => (
             <DiscountTableRow
               key={discount.id}
+              index={index}
               discount={discount}
               onDelete={onDeleteDiscount}
               handleSelect={handleSelect}
