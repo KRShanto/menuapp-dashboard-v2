@@ -4,10 +4,23 @@ import { createUserWithEmailAndPassword } from "firebase/auth";
 import { collection, addDoc } from "firebase/firestore";
 import { useSidebar } from "../ui/sidebar";
 import { useState } from "react";
+import { useForm } from "react-hook-form";
 
+interface FormInputData {
+  name: string;
+  email: string;
+  password: string;
+}
 export default function ManagerAdd() {
   const { setOpen } = useSidebar();
   const [error, setError] = useState<string | null>(null);
+
+  const {
+    register,
+    formState: { errors, isValid },
+  } = useForm<FormInputData>({
+    mode: "onChange",
+  });
 
   async function handleSubmit(data: FormData) {
     const name = data.get("name") as string;
@@ -54,9 +67,11 @@ export default function ManagerAdd() {
             type="text"
             className="w-full rounded-md border border-foreground/70 bg-transparent p-2 px-3 placeholder-foreground/70 outline-none"
             id="name"
-            name="name"
-            required
+            {...register("name", { required: "Name is required" })}
           />
+          {errors.name && (
+            <span className="text-red-500">{errors.name.message}</span>
+          )}
         </div>
         <div className="relative mt-4">
           <label
@@ -69,9 +84,17 @@ export default function ManagerAdd() {
             type="email"
             className="w-full rounded-md border border-foreground/70 bg-transparent p-2 px-3 placeholder-foreground/70 outline-none"
             id="email"
-            name="email"
-            required
+            {...register("email", {
+              required: "Email is required",
+              pattern: {
+                value: /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/,
+                message: "Invalid email address",
+              },
+            })}
           />
+          {errors.email && (
+            <span className="text-red-500">{errors.email.message}</span>
+          )}
         </div>
         <div className="relative mt-5">
           <label
@@ -84,9 +107,17 @@ export default function ManagerAdd() {
             type="password"
             className="w-full rounded-md border border-foreground/70 bg-transparent p-2 px-3 placeholder-foreground/70 outline-none"
             id="password"
-            name="password"
-            required
+            {...register("password", {
+              required: "Password is required",
+              minLength: {
+                value: 6,
+                message: "Password must be at least 6 characters long",
+              },
+            })}
           />
+          {errors.password && (
+            <span className="text-red-500">{errors.password.message}</span>
+          )}
         </div>
 
         {error && <div className="text-red-500 mt-2">{error}</div>}

@@ -24,6 +24,7 @@ export default function ApprovalEdit() {
     register,
     setValue,
     watch,
+    trigger,
     formState: { errors, isValid },
   } = useForm<FormInputData>({
     resolver: zodResolver(schema),
@@ -111,10 +112,10 @@ export default function ApprovalEdit() {
             <img
               src={imageURL}
               alt="Item"
-              className="h-60 w-full rounded-lg object-cover"
+              className="h-40 w-full rounded-lg object-cover"
             />
           ) : (
-            <div className="h-60 w-full rounded-lg bg-neutral-900/50" />
+            <div className="h-40 w-full rounded-lg bg-neutral-900/50" />
           )}
 
           {/* File input to select image */}
@@ -123,9 +124,10 @@ export default function ApprovalEdit() {
             id="file"
             type="file"
             accept="image/*"
-            onChange={(e) => {
+            onChange={async (e) => {
               if (e.target.files && e.target.files[0]) {
                 setValue("image", e.target.files[0]);
+                await trigger("image");
               }
             }}
             className="hidden"
@@ -188,7 +190,7 @@ export default function ApprovalEdit() {
           <textarea
             {...register("description")}
             placeholder="Enter Description"
-            className="h-24 w-full rounded-md border border-foreground/70 bg-transparent p-2 px-3 placeholder-foreground/70 outline-none"
+            className="h-16 w-full rounded-md border border-foreground/70 bg-transparent p-2 px-3 placeholder-foreground/70 outline-none"
           />
           {errors.description && (
             <span className="text-red-500">{errors.description.message}</span>
