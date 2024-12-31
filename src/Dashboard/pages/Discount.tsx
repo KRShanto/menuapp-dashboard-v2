@@ -7,7 +7,14 @@ import { RiDeleteBin7Line } from "react-icons/ri";
 import { DiscountTable } from "../components/DIscountTable";
 import SelectComponent from "../components/SelectComponent";
 import { useEffect, useState } from "react";
-import { collection, onSnapshot, orderBy, query } from "firebase/firestore";
+import {
+  collection,
+  deleteDoc,
+  doc,
+  onSnapshot,
+  orderBy,
+  query,
+} from "firebase/firestore";
 import { db, DISCOUNT_COLLECTION } from "@/lib/firebase";
 
 export default function Discount() {
@@ -54,6 +61,15 @@ export default function Discount() {
     return () => unsub();
   }, []);
 
+  async function onDelete(id: string) {
+    try {
+      await deleteDoc(doc(db, DISCOUNT_COLLECTION, id));
+    } catch (error) {
+      console.error("Error deleting discount: ", error);
+      alert("Failed to delete discount");
+    }
+  }
+
   return (
     <div className="h-full">
       <h1 className="text-3xl font-semibold">Discount</h1>
@@ -64,6 +80,7 @@ export default function Discount() {
           selectedItems={selectedDiscounts}
           cancelSelection={() => setSelectedDiscounts([])}
           isSelected={selectedDiscounts.length === discounts.length}
+          onDelete={onDelete}
         />
       )}
       <OptionOpener>
