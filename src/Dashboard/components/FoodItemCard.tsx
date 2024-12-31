@@ -3,20 +3,24 @@ import { Checkbox } from "antd";
 import { useSidebar } from "@/components/ui/sidebar";
 
 interface FoodCardProps {
+  id: string;
   image: string;
   name: string;
   description: string;
   price: number;
+  category: string;
   calories: number;
   isSelected: boolean;
   onSelect: () => void;
   isDeleteClicked?: boolean;
 }
 const FoodItemCard = ({
+  id,
   image,
   name,
   description,
   price,
+  category,
   calories,
   onSelect,
   isSelected,
@@ -52,7 +56,17 @@ const FoodItemCard = ({
             </div>
             <button
               className="w-full flex text-black bg-primary-color px-2 py-2 rounded-lg items-center justify-center mt-2"
-              onClick={() => setOpen(true, "MENU_EDIT")}
+              onClick={() =>
+                setOpen(true, "MENU_EDIT", {
+                  id,
+                  name,
+                  description,
+                  price,
+                  calories,
+                  imageURL: image,
+                  category,
+                })
+              }
             >
               <span className="mr-2">See Details</span>
               <ArrowRight className="h-4 w-4 " />

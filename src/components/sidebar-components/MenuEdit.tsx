@@ -1,13 +1,13 @@
 import { db, MENU_COLLECTION, MENU_IMAGES } from "@/lib/firebase";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { addDoc, collection } from "firebase/firestore";
+import { doc, updateDoc } from "firebase/firestore";
 import { storage } from "@/lib/firebase";
 import { useEffect, useState } from "react"; // Added useEffect and useState
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import SidebarFooter from "../sidebar/SidebarFooter";
 import { useSidebar } from "../ui/sidebar";
-import { ref, uploadBytes } from "firebase/storage";
+import { deleteObject, ref, uploadBytes } from "firebase/storage";
 
 // Define the Zod schema
 const schema = z.object({
@@ -39,10 +39,11 @@ export default function MenuEdit() {
     },
   });
 
+  const { setOpen, sidebarData } = useSidebar();
+
   const [image, setImage] = useState<File | null>(null);
   const [imageURL, setImageURL] = useState<string | null>(null);
-
-  const { setOpen } = useSidebar();
+  const [imageChanged, setImageChanged] = useState(false);
 
   useEffect(() => {
     if (image instanceof File) {
@@ -59,36 +60,48 @@ export default function MenuEdit() {
     }
   }, [image]);
 
-  async function onSubmit(data: FormData) {
-    console.log("Form Submitted", data);
+  useEffect(() => {
+    if (sidebarData) {
+      setValue("name", sidebarData.name);
+      setValue("category", sidebarData.category);
+      setValue("price", sidebarData.price);
+      setValue("description", sidebarData.description);
+      setValue("calories", sidebarData.calories);
+      setValue("image", sidebarData.imageURL);
+      setImageURL(sidebarData.imageURL);
+    }
+  }, [sidebarData, setValue]);
 
+  async function onSubmit(data: FormData) {
     const name = data.get("name");
     const category = data.get("category");
     const price = data.get("price");
     const description = data.get("description");
     const calories = data.get("calories");
-    console.log("Uploading image: ", image);
 
     try {
-      console.log("Uploading image: ");
       // Upload image to Firebase Storage
-      if (image instanceof File) {
+      if (imageChanged && image instanceof File) {
         const imageRef = ref(storage, `${MENU_IMAGES}/${image.name}`);
 
-        const res = await uploadBytes(imageRef, image);
+        await uploadBytes(imageRef, image);
 
-        console.log("Image uploaded successfully: ", res);
+        // delete old image
+        if (sidebarData?.imageURL) {
+          const oldImageRef = ref(storage, sidebarData.imageURL);
+          // Delete the file
+          await deleteObject(oldImageRef);
+        }
       }
 
-      // Add data to Firestore
-      await addDoc(collection(db, MENU_COLLECTION), {
-        name: name,
-        category: category,
-        price: price,
-        description: description,
-        calories: calories,
+      // Update doc in Firebase
+      await updateDoc(doc(db, MENU_COLLECTION, sidebarData.id), {
+        name,
+        category,
+        price,
+        description,
+        calories,
         imageURL: `${MENU_IMAGES}/${image?.name}`,
-        createdAt: new Date(),
       });
 
       // console.log("Data uploaded successfully");
@@ -126,6 +139,7 @@ export default function MenuEdit() {
               if (file instanceof File) {
                 setImage(file);
                 setValue("image", file);
+                setImageChanged(true);
               }
             }}
             className="hidden"
@@ -153,6 +167,7 @@ export default function MenuEdit() {
             {...register("name")}
             placeholder="Enter Item Name"
             className="w-full rounded-md border border-foreground/70 bg-transparent p-2 px-3 placeholder-foreground/70 outline-none"
+            // value={sidebarData?.name}
           />
           {errors.name && (
             <span className="text-red-500">{errors.name.message}</span>
@@ -171,6 +186,7 @@ export default function MenuEdit() {
             {...register("category")}
             placeholder="Enter Category Name"
             className="w-full rounded-md border border-foreground/70 bg-transparent p-2 px-3 placeholder-foreground/70 outline-none"
+            // value={sidebarData?.category}
           />
           {errors.category && (
             <span className="text-red-500">{errors.category.message}</span>
@@ -189,6 +205,7 @@ export default function MenuEdit() {
             {...register("description")}
             placeholder="Enter Description"
             className="h-24 w-full rounded-md border border-foreground/70 bg-transparent p-2 px-3 placeholder-foreground/70 outline-none"
+            // value={sidebarData?.description}
           />
           {errors.description && (
             <span className="text-red-500">{errors.description.message}</span>
@@ -207,6 +224,7 @@ export default function MenuEdit() {
             {...register("calories", { valueAsNumber: true })}
             placeholder="Enter Calories"
             className="w-full rounded-md border border-foreground/70 bg-transparent p-2 px-3 placeholder-foreground/70 outline-none"
+            // value={sidebarData?.calories}
           />
           {errors.calories && (
             <span className="text-red-500">{errors.calories.message}</span>
@@ -225,6 +243,7 @@ export default function MenuEdit() {
             {...register("price", { valueAsNumber: true })}
             placeholder="Enter Price"
             className="w-full rounded-md border border-foreground/70 bg-transparent p-2 px-3 placeholder-foreground/70 outline-none"
+            // value={sidebarData?.price}
           />
           {errors.price && (
             <span className="text-red-500">{errors.price.message}</span>

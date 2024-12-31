@@ -65,8 +65,6 @@ export default function ShowAllItem({
     }
   }
 
-  console.log("List:  ", list);
-
   return (
     <div className="space-y-4">
       {isDeleteClicked && (
@@ -84,9 +82,11 @@ export default function ShowAllItem({
           return (
             <div key={index}>
               <FoodItemCard
+                id={item.id}
                 name={item.name}
                 description={item.description}
                 image={item.imageURL}
+                category={item.category}
                 calories={item.calories}
                 price={item.price}
                 isSelected={selectedItems.includes(item.id)}
