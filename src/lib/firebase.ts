@@ -36,3 +36,6 @@ export const MANAGER_DEFAULT_IMAGE = "/user-image.png";
 export const FEEDBACK_COLLECTION = import.meta.env.PROD
   ? "production__feedback"
   : "development__feedback";
+export const COMBO_COLLECTION = import.meta.env.PROD
+  ? "production__combo"
+  : "development__combo";
