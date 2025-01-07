@@ -3,18 +3,29 @@ import AuthForm from "./AuthForm";
 import AlBaharat from "../../assets/icons/albaharat.svg?react";
 import { auth } from "@/lib/firebase";
 import { signInWithEmailAndPassword } from "firebase/auth";
+import { useUserStore } from "@/store/userStore";
 
 const AuthPage: React.FC = () => {
   const [formType, setFormType] = useState<
     "login" | "forgot" | "changePassword"
   >("login");
   const [error, setError] = useState("");
-
+  const setUserName = useUserStore((state) => state.setUserName);
   const handleSubmit = async (data: { email?: string; password?: string }) => {
     if (formType === "login") {
       // Handle login
       try {
-        await signInWithEmailAndPassword(auth, data.email!, data.password!);
+        const userCredential = await signInWithEmailAndPassword(
+          auth,
+          data.email!,
+          data.password!
+        );
+        const user = userCredential.user;
+        console.log("User:", user);
+        console.log("User:", user);
+
+        // Set the user's name in Zustand store
+        setUserName(user.email!);
 
         // Signed in
         window.location.href = "/dashboard";

@@ -1,6 +1,7 @@
-import React from "react";
+import { useUserStore } from "@/store/userStore";
 
 export default function TopBar() {
+  const userName = useUserStore((state) => state.userName);
   const currentDate = new Date();
 
   const formattedDate = currentDate.toLocaleDateString("en-GB", {
@@ -41,7 +42,7 @@ export default function TopBar() {
           className="w-10 h-10 rounded-full"
         />
         <div className="flex flex-col">
-          <span>Fahim Ahmed</span>
+          <span>{userName}</span>
           <span className="text-[#7A766E]">Admin</span>
         </div>
       </div>

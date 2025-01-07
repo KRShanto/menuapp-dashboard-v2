@@ -11,6 +11,9 @@ import {
 
 import { NavLink } from "react-router-dom";
 import AlBaharat from "../../assets/icons/albaharat.svg?react";
+import { auth } from "@/lib/firebase";
+import { useUserStore } from "@/store/userStore";
+import { signOut } from "firebase/auth";
 export function SideNav() {
   const menuItems = [
     { icon: <Menu size={20} />, text: "Menu List", path: "/dashboard" },
@@ -40,6 +43,16 @@ export function SideNav() {
       path: "/dashboard/settings",
     },
   ];
+  const setUserName = useUserStore((state) => state.setUserName);
+  const handleLogout = async () => {
+    try {
+      await signOut(auth);
+      setUserName(""); // Clear the user's name in Zustand store
+      window.location.href = "/"; // Redirect to login page
+    } catch (error) {
+      console.error("Error logging out:", error);
+    }
+  };
 
   return (
     <div className="fixed h-screen w-[20%] bg-navbgprimary text-gray-300 flex flex-col border-r border-[#1F1F20] ">
@@ -72,7 +85,7 @@ export function SideNav() {
           to="/dashboard/logout"
           className="flex rounded-lg gap-2 px-2 py-4 text-primary-color bg-[#1F1F20]"
         >
-          <div className="flex items-center gap-2 ">
+          <div className="flex items-center gap-2 " onClick={handleLogout}>
             <span className="mt-0.5">
               <LogOut size={20} />
             </span>

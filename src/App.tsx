@@ -4,7 +4,6 @@ import AuthPage from "./Auth/components/AuthPage";
 import DashBoard from "./Dashboard/components/DashBoard";
 import Discount from "./Dashboard/pages/Discount";
 import Feedback from "./Dashboard/pages/Feedback";
-import Logout from "./Dashboard/pages/Logout";
 import ManagerManagement from "./Dashboard/pages/ManagerManagement";
 import MenuApproval from "./Dashboard/pages/MenuApproval";
 import MenuList from "./Dashboard/pages/MenuList";
@@ -23,7 +22,6 @@ export default function App() {
           <Route path="manager-management" element={<ManagerManagement />} />
           <Route path="feedback" element={<Feedback />} />
           <Route path="settings" element={<Settings />} />
-          <Route path="logout" element={<Logout />} />
         </Route>
       </Routes>
     </Router>
