@@ -1,4 +1,3 @@
-import React from "react";
 import { useSidebar } from "../ui/sidebar";
 
 export default function SidebarFooterComponent({

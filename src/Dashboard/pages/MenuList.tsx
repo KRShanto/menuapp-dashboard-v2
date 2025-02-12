@@ -5,8 +5,7 @@ import OptionButton from "@/components/sidebar/OptionButton";
 import { RiDeleteBin7Line } from "react-icons/ri";
 import { IoAddOutline } from "react-icons/io5";
 export default function MenuList() {
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const [testShow, setTestShow] = useState(false);
+  // const [testShow, setTestShow] = useState(false);
   const [deleteCLicked, setDeleteClicked] = useState(false);
   return (
     <div className="h-full">
@@ -29,13 +28,21 @@ export default function MenuList() {
       </OptionOpener>
 
       {/* center text of the page */}
-      {testShow ? (
+      {/* TODO: */}
+      {/* {testShow ? (
         <div className="flex items-center justify-center h-[100%] text-secondary-text-color">
           <div>No Food Items are Added</div>
         </div>
       ) : (
-        <ShowAllItem isDeleteClicked={deleteCLicked} setIsDeleteClicked={setDeleteClicked} />
-      )}
+        <ShowAllItem
+          isDeleteClicked={deleteCLicked}
+          setIsDeleteClicked={setDeleteClicked}
+        />
+      )} */}
+      <ShowAllItem
+        isDeleteClicked={deleteCLicked}
+        setIsDeleteClicked={setDeleteClicked}
+      />
     </div>
   );
 }

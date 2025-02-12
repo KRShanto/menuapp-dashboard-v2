@@ -2,9 +2,8 @@ import { useEffect, useState } from "react";
 import { ItemsType } from "../../types/Item";
 import FoodItemCard from "./FoodItemCard";
 import SelectComponent from "./SelectComponent";
-import { db, MENU_COLLECTION, storage } from "@/lib/firebase";
+import { db, MENU_COLLECTION } from "@/lib/firebase";
 import { collection, onSnapshot, query, orderBy } from "firebase/firestore";
-import { getDownloadURL, ref } from "firebase/storage";
 import { deleteDoc, doc } from "firebase/firestore";
 
 export default function ShowAllItem({

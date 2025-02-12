@@ -17,7 +17,7 @@ export default function ManagerAdd() {
 
   const {
     register,
-    formState: { errors, isValid },
+    formState: { errors },
   } = useForm<FormInputData>({
     mode: "onChange",
   });
