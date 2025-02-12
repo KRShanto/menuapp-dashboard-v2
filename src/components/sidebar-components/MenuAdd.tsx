@@ -8,6 +8,7 @@ import { z } from "zod";
 import SidebarFooter from "../sidebar/SidebarFooter";
 import { useSidebar } from "../ui/sidebar";
 import { ref, uploadBytes } from "firebase/storage";
+import { getDownloadURL } from "firebase/storage";
 
 // Define the Zod schema
 const schema = z.object({
@@ -76,6 +77,8 @@ export default function MenuAdd() {
     console.log("Uploading image: ", image);
 
     try {
+      let imageURL;
+
       console.log("Uploading image: ");
       // Upload image to Firebase Storage
       if (image instanceof File) {
@@ -84,6 +87,9 @@ export default function MenuAdd() {
         const res = await uploadBytes(imageRef, image);
 
         console.log("Image uploaded successfully: ", res);
+
+        // get the download URL
+        imageURL = await getDownloadURL(imageRef);
       }
 
       // Add data to Firestore
@@ -93,7 +99,7 @@ export default function MenuAdd() {
         price: price,
         description: description,
         calories: calories,
-        imageURL: `${MENU_IMAGES}/${image?.name}`,
+        imageURL,
         createdAt: new Date(),
       });
 

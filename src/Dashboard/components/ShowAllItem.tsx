@@ -24,11 +24,11 @@ export default function ShowAllItem({
       const q = query(menuCollection, orderBy("createdAt", "desc"));
       const unsub = onSnapshot(q, (snapshot) => {
         const menuList = snapshot.docs.map(async (doc) => {
-          const src = await getDownloadURL(ref(storage, doc.data().imageURL));
+          // const src = await getDownloadURL(ref(storage, doc.data().imageURL));
           return {
             ...doc.data(),
             id: doc.id,
-            imageURL: src,
+            // imageURL: src,
           };
         });
         Promise.all(menuList).then((items) => {
